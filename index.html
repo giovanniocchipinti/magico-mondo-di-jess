@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Agenda</title>
+  <meta name="description" content="Agenda personale: Vivaio, Kroma Web Lab, Personale">
+  <meta name="theme-color" content="#f6f5f2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#141412" media="(prefers-color-scheme: dark)">
+
+  <!-- Applica subito il tema salvato, prima che la pagina venga disegnata (evita il "lampo" chiaro) -->
+  <script>
+    try {
+      const tema = localStorage.getItem('tema');
+      if (tema) document.documentElement.dataset.theme = tema;
+    } catch (e) {}
+  </script>
+
+  <!-- Font: Plus Jakarta Sans per l'interfaccia, Manrope per orari e numeri -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Vai al contenuto</a>
+
+  <div class="app">
+    <!-- Navigazione: barra in basso su mobile, sidebar su desktop -->
+    <nav class="nav" aria-label="Viste">
+      <div class="nav__brand">Agenda</div>
+      <a class="nav__link" href="#oggi" data-route="oggi"><span class="nav__icon" data-icon="sun"></span><span>Oggi</span></a>
+      <a class="nav__link" href="#settimana" data-route="settimana"><span class="nav__icon" data-icon="calendarRange"></span><span>Settimana</span></a>
+      <a class="nav__link" href="#mese" data-route="mese"><span class="nav__icon" data-icon="calendarDays"></span><span>Mese</span></a>
+      <a class="nav__link" href="#inbox" data-route="inbox"><span class="nav__icon" data-icon="inbox"></span><span>Da pianificare</span></a>
+    </nav>
+
+    <div class="main-col">
+      <header class="topbar">
+        <div>
+          <p class="topbar__eyebrow" id="view-eyebrow"></p>
+          <h1 class="topbar__title" id="view-title" tabindex="-1"></h1>
+        </div>
+        <button class="icon-btn" id="theme-toggle" type="button"></button>
+      </header>
+
+      <!-- Qui il router inserisce la vista corrente -->
+      <main id="main" class="main" tabindex="-1"></main>
+    </div>
+  </div>
+
+  <!-- Pulsante di aggiunta rapida, sempre visibile -->
+  <button class="fab" id="fab" type="button" aria-label="Aggiungi task" aria-keyshortcuts="N">
+    <span data-icon="plus"></span>
+  </button>
+
+  <dialog class="sheet" id="quick-add" aria-labelledby="quick-add-title">
+    <form class="sheet__body" id="quick-add-form" method="dialog">
+      <div class="sheet__head">
+        <h2 class="sheet__title" id="quick-add-title">Nuova task</h2>
+        <button class="icon-btn" type="button" data-close aria-label="Chiudi"><span data-icon="x"></span></button>
+      </div>
+      <label class="visually-hidden" for="quick-add-input">Titolo</label>
+      <input class="field" id="quick-add-input" name="title" type="text" autocomplete="off" required placeholder="Cosa devi fare?">
+      <fieldset class="chip-group" id="quick-add-areas">
+        <legend class="visually-hidden">Area</legend>
+      </fieldset>
+      <p class="sheet__hint" id="quick-add-hint"></p>
+      <button class="btn btn--primary btn--block" type="submit">Aggiungi</button>
+    </form>
+  </dialog>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

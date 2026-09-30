@@ -1,0 +1,43 @@
+// Mini router basato sull'hash dell'URL (#oggi, #settimana, ...).
+// Con l'hash il browser non chiede mai una nuova pagina al server:
+// perfetto per GitHub Pages, che non sa gestire indirizzi come /settimana.
+
+import * as oggi from './views/today.js';
+import * as settimana from './views/week.js';
+import * as mese from './views/month.js';
+import * as inbox from './views/inbox.js';
+import * as componenti from './views/components.js';
+
+const routes = { oggi, settimana, mese, inbox, componenti };
+const defaultRoute = 'oggi';
+
+let current = defaultRoute;
+let renderView = null;
+
+export function currentRoute() {
+  return current;
+}
+
+// renderView(nome, modulo, { isNavigation }) viene chiamata a ogni cambio di vista
+export function initRouter(onRender) {
+  renderView = onRender;
+
+  window.addEventListener('hashchange', () => {
+    current = routeFromHash();
+    renderView(current, routes[current], { isNavigation: true });
+  });
+
+  current = routeFromHash();
+  renderView(current, routes[current], { isNavigation: false });
+}
+
+// Ridisegna la vista corrente (es. dopo un'aggiunta rapida)
+export function refresh() {
+  renderView(current, routes[current], { isNavigation: false });
+}
+
+function routeFromHash() {
+  const name = location.hash.slice(1);
+  // Object.hasOwn e non "in": "in" troverebbe anche chiavi ereditate come #toString
+  return Object.hasOwn(routes, name) ? name : defaultRoute;
+}

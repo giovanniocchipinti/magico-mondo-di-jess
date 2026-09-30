@@ -1,0 +1,8 @@
+# File di sistema
+.DS_Store
+
+# Configurazione locale di Claude Code
+.claude/
+
+# Variabili d'ambiente (non dovrebbero servire, ma meglio non rischiare)
+.env

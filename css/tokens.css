@@ -1,0 +1,114 @@
+/* =========================================================
+   Design token: tutte le scelte visive in un solo posto.
+   Cambiando un valore qui cambia in tutta l'app.
+   ========================================================= */
+
+:root {
+  /* Font */
+  --font-ui: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-num: 'Manrope', var(--font-ui);
+
+  /* Scala tipografica (1rem = 16px) */
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.75rem;
+
+  /* Spazi: multipli di 4px */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-7: 32px;
+  --s-8: 48px;
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-full: 999px;
+
+  --tap: 44px;      /* area di tocco minima consigliata */
+  --nav-h: 64px;    /* altezza barra in basso su mobile */
+
+  /* Ombra solo per ciò che "galleggia" (FAB, pannelli) */
+  --shadow-float: 0 6px 20px rgb(0 0 0 / 0.14), 0 1px 3px rgb(0 0 0 / 0.1);
+
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --dur: 160ms;
+
+  /* ---------- Tema chiaro (predefinito) ---------- */
+  color-scheme: light;
+  --bg: #f6f5f2;          /* sfondo pagina, neutro caldo */
+  --surface: #ffffff;     /* liste, pannelli */
+  --surface-2: #efede8;   /* fascia lavoro, tracce, hover */
+  --border: #e4e1db;
+  --border-strong: #c9c5bd;
+  --text: #1c1b19;
+  --text-2: #57534d;      /* testo secondario */
+  --text-3: #736e67;      /* meta, etichette (contrasto AA su bianco e su --bg) */
+  --accent: #1c1b19;      /* pulsanti primari: inchiostro, non un colore */
+  --on-accent: #ffffff;
+  --focus: #1f5fd1;
+  --danger: #b42318;
+  --warning: #b54708;
+  --now: #d92d20;         /* linea dell'ora attuale */
+
+  /* Quanto "schiarire" i colori delle aree (0% in chiaro, vedi tema scuro) */
+  --area-lift: 0%;
+}
+
+/* ---------- Tema scuro ----------
+   Definito due volte: una per chi ha il sistema in scuro (e non ha scelto "chiaro"),
+   una per chi sceglie "scuro" a mano. Il CSS puro non permette di evitarlo. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #141412;
+    --surface: #1c1b19;
+    --surface-2: #252421;
+    --border: #2f2d2a;
+    --border-strong: #46433e;
+    --text: #eeece8;
+    --text-2: #b8b4ad;
+    --text-3: #9a958d;
+    --accent: #eeece8;
+    --on-accent: #141412;
+    --focus: #7aa7ff;
+    --danger: #ff8a80;
+    --warning: #f5a524;
+    --now: #ff6b5e;
+    --area-lift: 30%;
+    --shadow-float: 0 6px 20px rgb(0 0 0 / 0.5);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #141412;
+  --surface: #1c1b19;
+  --surface-2: #252421;
+  --border: #2f2d2a;
+  --border-strong: #46433e;
+  --text: #eeece8;
+  --text-2: #b8b4ad;
+  --text-3: #9a958d;
+  --accent: #eeece8;
+  --on-accent: #141412;
+  --focus: #7aa7ff;
+  --danger: #ff8a80;
+  --warning: #f5a524;
+  --now: #ff6b5e;
+  --area-lift: 30%;
+  --shadow-float: 0 6px 20px rgb(0 0 0 / 0.5);
+}
+
+/* Colore dell'area: ogni elemento con data-area riceve --area (dal JS)
+   e qui lo adattiamo al tema. In scuro viene mischiato col bianco per restare leggibile. */
+[data-area] {
+  --area-c: color-mix(in oklab, var(--area), white var(--area-lift));
+  --area-soft: color-mix(in oklab, var(--area-c) 14%, var(--surface));
+}

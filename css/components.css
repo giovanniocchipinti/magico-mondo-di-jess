@@ -1,0 +1,636 @@
+/* Componenti riutilizzabili. Nomi in stile BEM: blocco__elemento--variante */
+
+/* ---------- Pulsanti ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-height: var(--tap);
+  padding: 0 var(--s-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.btn:hover {
+  background: var(--surface-2);
+}
+
+.btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.btn--primary:hover {
+  background: var(--accent);
+  opacity: 0.88;
+}
+
+.btn--ghost {
+  border-color: transparent;
+  background: transparent;
+}
+
+/* Pulsante piccolo: resta alto 36px ma l'area cliccabile arriva a 44px grazie al margine negativo del contenitore */
+.btn--sm {
+  min-height: 36px;
+  padding: 0 var(--s-3);
+  font-size: var(--fs-sm);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  flex: none;
+  border: 0;
+  border-radius: var(--r-full);
+  background: transparent;
+  color: var(--text-2);
+}
+
+.icon-btn:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ---------- FAB (pulsante aggiungi) ---------- */
+.fab {
+  position: fixed;
+  right: var(--s-4);
+  bottom: calc(var(--nav-h) + var(--s-4) + env(safe-area-inset-bottom));
+  z-index: 11;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-float);
+  transition: transform var(--dur) var(--ease);
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+.fab svg {
+  width: 26px;
+  height: 26px;
+}
+
+@media (min-width: 1024px) {
+  .fab {
+    right: var(--s-7);
+    bottom: var(--s-7);
+  }
+}
+
+/* ---------- Campo di testo ---------- */
+.field {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 var(--s-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  font-size: var(--fs-md); /* 16px: sotto questa misura iOS fa lo zoom quando tocchi il campo */
+}
+
+.field::placeholder {
+  color: var(--text-3);
+}
+
+.field:focus-visible {
+  outline-offset: 0;
+  border-color: var(--focus);
+}
+
+/* ---------- Chip (area, filtri) ---------- */
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: 36px;
+  padding: 0 var(--s-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-full);
+  background: var(--surface);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--area-c, var(--text-3));
+}
+
+/* Chip-radio: l'input resta nel DOM (e riceve il focus) ma è invisibile */
+.chip input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.chip:has(input:checked),
+.chip[aria-pressed="true"] {
+  border-color: var(--area-c, var(--text));
+  background: var(--area-soft, var(--surface-2));
+  color: var(--text);
+}
+
+.chip:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ---------- Checkbox ---------- */
+.check {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  flex: none;
+  margin: -10px -8px -10px -10px; /* area di tocco 44px senza allargare la riga */
+  cursor: pointer;
+}
+
+.check input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.check__box {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--border-strong);
+  border-radius: 7px;
+  color: transparent;
+  transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.check__box svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 3;
+}
+
+.check:hover .check__box {
+  border-color: var(--area-c, var(--text-2));
+}
+
+.check input:checked + .check__box {
+  border-color: var(--area-c, var(--accent));
+  background: var(--area-c, var(--accent));
+  color: var(--surface);
+}
+
+.check input:focus-visible + .check__box {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ---------- Sezione con titolo ---------- */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.section__head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.section__head svg {
+  width: 16px;
+  height: 16px;
+}
+
+.section__range {
+  margin-left: auto;
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+.count {
+  min-width: 22px;
+  padding: 0 6px;
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  font-size: var(--fs-xs);
+  text-align: center;
+}
+
+.count--warning {
+  background: color-mix(in oklab, var(--warning) 16%, var(--surface));
+  color: var(--warning);
+}
+
+/* ---------- Lista di elementi (un solo contenitore, non una card per riga) ---------- */
+.group {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4) var(--s-3) var(--s-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.item:last-child {
+  border-bottom: 0;
+}
+
+/* Barretta colorata dell'area a sinistra */
+.item::before {
+  content: '';
+  position: absolute;
+  top: var(--s-3);
+  bottom: var(--s-3);
+  left: 0;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--area-c);
+}
+
+.item__time {
+  width: 44px;
+  flex: none;
+  padding-top: 1px;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.item__time small {
+  display: block;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+/* Segnaposto per gli appuntamenti al posto della checkbox (stessa larghezza, righe allineate) */
+.item__marker {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 24px;
+  flex: none;
+  color: var(--area-c);
+}
+
+.item__marker svg {
+  width: 18px;
+  height: 18px;
+}
+
+.item__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.item__title {
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px var(--s-3);
+  margin-top: 2px;
+  font-size: var(--fs-sm);
+  color: var(--text-3);
+}
+
+.item__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.item__meta svg {
+  width: 14px;
+  height: 14px;
+}
+
+.item__meta .is-late {
+  color: var(--warning);
+  font-weight: 600;
+}
+
+.item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+}
+
+.item__flag {
+  flex: none;
+  padding-top: 2px;
+}
+
+.item__flag svg {
+  width: 16px;
+  height: 16px;
+}
+
+.item__flag--high { color: var(--danger); }
+.item__flag--medium { color: var(--warning); }
+.item__flag--low { color: var(--text-3); }
+
+/* Elemento completato: resta visibile ma passa in secondo piano */
+.item.is-done .item__title {
+  color: var(--text-3);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.item.is-done .item__time,
+.item.is-done .item__flag {
+  opacity: 0.5;
+}
+
+/* Input data nascosto: il pulsante "Sposta" apre il suo calendario con showPicker() */
+.date-input-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- Linea dell'ora attuale ---------- */
+.now-line {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 0 var(--s-4);
+  margin: -1px 0;
+  color: var(--now);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.now-line::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--now);
+}
+
+/* ---------- Fascia (lavoro / dopo lavoro) ---------- */
+.slot--work {
+  padding: var(--s-3);
+  margin: 0 calc(var(--s-3) * -1);
+  border-radius: calc(var(--r-lg) + var(--s-2));
+  background: var(--surface-2);
+}
+
+/* ---------- Barra di avanzamento ---------- */
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.progress__label {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.progress__label strong {
+  color: var(--text);
+}
+
+.progress__track {
+  height: 6px;
+  overflow: hidden;
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+}
+
+.progress__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--text);
+  transition: width 300ms var(--ease);
+}
+
+/* ---------- Riquadro "Adesso / Dopo" ---------- */
+.now-card {
+  display: grid;
+  gap: var(--s-4);
+  padding: var(--s-4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+
+@media (min-width: 480px) {
+  .now-card {
+    grid-template-columns: 1.4fr 1fr;
+  }
+}
+
+.now-card__col + .now-card__col {
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--border);
+}
+
+@media (min-width: 480px) {
+  .now-card__col + .now-card__col {
+    padding: 0 0 0 var(--s-4);
+    border-top: 0;
+    border-left: 1px solid var(--border);
+  }
+}
+
+.eyebrow {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.now-card__title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin-top: var(--s-1);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.now-card__col:first-child .now-card__title {
+  font-size: var(--fs-xl);
+}
+
+.now-card__title .dot {
+  position: relative;
+  top: -2px;
+}
+
+.now-card__sub {
+  margin-top: 2px;
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+/* ---------- Stato vuoto ---------- */
+.empty {
+  padding: var(--s-4);
+  font-size: var(--fs-sm);
+  color: var(--text-3);
+}
+
+.placeholder {
+  padding: var(--s-7) var(--s-4);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-lg);
+  text-align: center;
+  color: var(--text-2);
+}
+
+.placeholder p + p {
+  margin-top: var(--s-1);
+  font-size: var(--fs-sm);
+  color: var(--text-3);
+}
+
+/* ---------- Pannello (dialog): dal basso su mobile, centrato su desktop ---------- */
+.sheet {
+  width: 100%;
+  max-width: 100%;
+  margin: auto 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 20px 20px 0 0;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-float);
+}
+
+.sheet::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
+.sheet__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-4) calc(var(--s-5) + env(safe-area-inset-bottom));
+}
+
+.sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-right: calc(var(--s-2) * -1);
+}
+
+.sheet__title {
+  font-size: var(--fs-lg);
+}
+
+.sheet__hint {
+  font-size: var(--fs-sm);
+  color: var(--text-3);
+}
+
+@media (min-width: 640px) {
+  .sheet {
+    max-width: 480px;
+    margin: auto;
+    border-radius: var(--r-lg);
+  }
+
+  .sheet__body {
+    padding: var(--s-5);
+  }
+}
+
+/* ---------- Pagina componenti (solo sviluppo) ---------- */
+.demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.swatch {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--fs-sm);
+}
+
+.swatch span:first-child {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--sw);
+}
