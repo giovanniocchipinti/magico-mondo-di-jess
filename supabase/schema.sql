@@ -18,7 +18,9 @@ create table public.areas (
   created_at timestamptz not null default now(),
 
   -- serve alla chiave esterna composta di items (vedi sotto)
-  unique (id, user_id)
+  unique (id, user_id),
+  -- due aree con lo stesso nome creerebbero confusione (vedi migrations/002)
+  constraint areas_nome_unico unique (user_id, name)
 );
 
 

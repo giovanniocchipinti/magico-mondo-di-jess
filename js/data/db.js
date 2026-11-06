@@ -43,23 +43,25 @@ export async function loadAll() {
   }
 }
 
-// Al primo accesso non ci sono aree: creiamo quelle iniziali e l'orario di lavoro
+// Al primo accesso non ci sono aree: creiamo quelle iniziali e l'orario di lavoro.
+// Usiamo upsert con ignoreDuplicates ("inserisci, ma se esiste già lascia stare"):
+// se due schede lo fanno insieme, il database tiene una sola copia grazie ai vincoli unique.
 export async function ensureDefaults() {
   if (areas.length > 0) return;
 
-  const { error: areasError } = await supabase.from('areas').insert([
+  const { error: areasError } = await supabase.from('areas').upsert([
     { name: 'Vivaio', color: '#2f7a4b', face: 'work', position: 0 },
     { name: 'Kroma Web Lab', color: '#d24f03', face: 'work', position: 1 },
     { name: 'Personale', color: '#b0356a', face: 'personal', position: 2 },
-  ]);
+  ], { onConflict: 'user_id,name', ignoreDuplicates: true });
   if (areasError) throw areasError;
 
   const weekdays = [1, 2, 3, 4, 5].map((weekday) => ({ weekday, start_time: '07:00', end_time: '15:00' }));
-  const { error: hoursError } = await supabase.from('work_hours').insert([
+  const { error: hoursError } = await supabase.from('work_hours').upsert([
     ...weekdays,
     { weekday: 6, start_time: '07:00', end_time: '12:00' },
     { weekday: 7, start_time: null, end_time: null },
-  ]);
+  ], { onConflict: 'user_id,weekday', ignoreDuplicates: true });
   if (hoursError) throw hoursError;
 
   await loadAll();

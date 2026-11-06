@@ -4,5 +4,5 @@
 // identifica solo il progetto. I dati sono protetti dal login e dalle policy RLS.
 // La chiave "secret" (o "service_role") invece salta la RLS: NON deve MAI finire qui.
 
-export const SUPABASE_URL = 'https://TUO-PROGETTO.supabase.co';
-export const SUPABASE_KEY = 'sb_publishable_INCOLLA-QUI-LA-CHIAVE';
+export const SUPABASE_URL = 'https://zgocyyqnjdnshgwbupxm.supabase.co';
+export const SUPABASE_KEY = 'sb_publishable_RqAAIvW5SMLvj7WyiWxFaQ_iQvIz4Lr';
