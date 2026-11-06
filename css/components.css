@@ -1001,3 +1001,85 @@ select.field {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+/* ---------- Vista Oggi: frase del giorno ---------- */
+.quote {
+  max-width: 48ch;
+  margin-top: calc(var(--s-3) * -1); /* resta vicina al titolo, è parte dell'intestazione */
+  font-size: var(--fs-md);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+/* ---------- Il punto della situazione ---------- */
+.situation__text {
+  max-width: 60ch;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.situation__text strong {
+  color: var(--text);
+}
+
+/* ---------- Prima di tutto: stessa lista, bordo più marcato ---------- */
+.group--focus {
+  border-color: var(--border-strong);
+}
+
+/* ---------- Buco libero nella timeline ---------- */
+.gap {
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 1px solid var(--border);
+  /* tratteggio: è tempo vuoto, non un impegno */
+  background: repeating-linear-gradient(-45deg, transparent 0 6px, var(--surface-2) 6px 7px);
+}
+
+.gap:last-child {
+  border-bottom: 0;
+}
+
+.gap__head {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.gap__empty {
+  margin-top: 2px;
+  font-size: var(--fs-sm);
+  color: var(--text-3);
+}
+
+.gap__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  margin-top: var(--s-2);
+}
+
+.suggestion {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-1) var(--s-1) var(--s-1) var(--s-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+
+.suggestion__title {
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-align: left;
+  overflow-wrap: anywhere;
+}

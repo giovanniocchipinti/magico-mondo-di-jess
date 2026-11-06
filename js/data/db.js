@@ -56,9 +56,9 @@ export async function ensureDefaults() {
   if (areas.length > 0) return;
 
   const { error: areasError } = await supabase.from('areas').upsert([
-    { name: 'Vivaio', color: '#2f7a4b', face: 'work', position: 0 },
-    { name: 'Kroma Web Lab', color: '#d24f03', face: 'work', position: 1 },
-    { name: 'Personale', color: '#b0356a', face: 'personal', position: 2 },
+    { name: 'Vivaio', color: '#2f7a4b', face: 'work', slot: 'work', position: 0 },
+    { name: 'Kroma Web Lab', color: '#d24f03', face: 'work', slot: 'free', position: 1 },
+    { name: 'Personale', color: '#b0356a', face: 'personal', slot: 'free', position: 2 },
   ], { onConflict: 'user_id,name', ignoreDuplicates: true });
   if (areasError) throw areasError;
 

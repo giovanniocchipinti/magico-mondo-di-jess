@@ -1,10 +1,13 @@
-// Vista Oggi: cosa c'è adesso, cosa viene dopo, e la giornata divisa in fasce
+// Vista Oggi: frase del giorno, cosa c'è adesso e dopo, il punto della situazione,
+// le priorità, e la giornata divisa in fasce con i buchi liberi e cosa farci
 
 import { items, workHours, updateItem, setDone } from '../data/db.js';
 import { openEditor } from '../item-editor.js';
 import { icon } from '../icons.js';
-import { itemRow, areaById, areaAttrs, escapeHtml, endTime, restoreFocus, showToast, saveErrorMessage, childStats } from '../ui.js';
-import { todayISO, isoWeekday, formatDayLong, nowMinutes, timeToMin, minToTime, formatIn } from '../dates.js';
+import { itemRow, areaById, areaAttrs, escapeHtml, endTime, restoreFocus, showToast, saveErrorMessage, childStats, priorityRank } from '../ui.js';
+import { todayISO, isoWeekday, formatDayLong, nowMinutes, timeToMin, minToTime, formatIn, formatDuration, addDays, startOfWeek } from '../dates.js';
+import { freeGaps, suggestionsFor } from '../planning.js';
+import { quoteOfDay } from '../data/quotes.js';
 
 export const title = 'Oggi';
 
@@ -14,6 +17,45 @@ export function eyebrow() {
 
 // Contatori dei sotto-elementi, ricalcolati a ogni render (vedi childStats in ui.js)
 let stats = new Map();
+
+// ---------- Aggiornamento automatico ----------
+// Ogni minuto (e quando si torna sull'app dal telefono) "Adesso", la linea dell'ora e i buchi liberi
+// devono seguire l'orologio. Chiediamo a main.js di ridisegnare con lo stesso evento del pannello.
+let refreshTimer = null;
+
+function canAutoRefresh(container) {
+  if (container.dataset.view !== 'oggi' || document.hidden) return false;
+  // non disturbare chi sta facendo qualcosa: pannello aperto o calendario "Altro giorno" in uso
+  if (document.querySelector('dialog[open]')) return false;
+  return !document.activeElement?.matches('input[type="date"], input[type="text"], textarea, select');
+}
+
+// Ridisegna e rimette il focus sullo stesso controllo (stessa riga, stessa azione, stessa sezione):
+// così l'aggiornamento non fa perdere il punto a chi usa la tastiera
+function autoRefresh(container) {
+  if (!canAutoRefresh(container)) return;
+  const active = document.activeElement;
+  const id = active?.closest('[data-id]')?.dataset.id;
+  const action = active?.dataset.action;
+  const section = active?.closest('section')?.getAttribute('aria-labelledby');
+
+  document.dispatchEvent(new CustomEvent('agenda:changed', { detail: {} }));
+
+  if (id && action) {
+    const root = container.querySelector(`section[aria-labelledby="${section}"]`) ?? container;
+    root.querySelector(`[data-id="${id}"] [data-action="${action}"]`)?.focus({ preventScroll: true });
+  }
+}
+
+function scheduleRefresh(container) {
+  clearInterval(refreshTimer);
+  refreshTimer = setInterval(() => {
+    if (container.dataset.view !== 'oggi') return clearInterval(refreshTimer);
+    autoRefresh(container);
+  }, 60 * 1000);
+}
+
+document.addEventListener('visibilitychange', () => autoRefresh(document.getElementById('main')));
 
 export function render(container) {
   stats = childStats();
@@ -32,12 +74,15 @@ export function render(container) {
     .sort((a, b) => a.scheduled_date.localeCompare(b.scheduled_date));
 
   container.innerHTML = `
+    <p class="quote">${escapeHtml(quoteOfDay(today))}</p>
     ${nowCard(timed, allDay, now)}
-    ${progress(dayItems)}
+    ${situation(topLevel, dayItems, overdue, today)}
+    ${focusSection(topLevel, today)}
     ${overdue.length ? overdueSection(overdue) : ''}
     ${allDay.length ? allDaySection(allDay) : ''}
-    ${daySlots(timed, workHours[isoWeekday(today)], now)}
+    ${daySlots(timed, workHours[isoWeekday(today)], now, today)}
   `;
+  scheduleRefresh(container);
 
   // Un solo gestore per tutta la vista ("event delegation"):
   // guardiamo su quale elemento è avvenuto l'evento tramite data-action
@@ -53,13 +98,21 @@ export function render(container) {
     afterRender();
   }
 
+  // Una task può comparire in due liste (es. "Prima di tutto" e "In giornata"):
+  // dopo il render il focus torna nella stessa sezione in cui si è agito
+  function sectionOf(element) {
+    const id = element.closest('section')?.getAttribute('aria-labelledby');
+    return () => container.querySelector(`section[aria-labelledby="${id}"]`) ?? container;
+  }
+
   container.onchange = (e) => {
     const row = e.target.closest('[data-id]');
     if (!row) return;
     const item = items.find((i) => i.id === row.dataset.id);
 
     if (e.target.dataset.action === 'toggle') {
-      save(setDone(item, e.target.checked), () => restoreFocus(container, item.id, 'input[type="checkbox"]'));
+      const section = sectionOf(e.target);
+      save(setDone(item, e.target.checked), () => restoreFocus(section(), item.id, 'input[type="checkbox"]'));
     }
 
     if (e.target.dataset.action === 'move' && e.target.value) {
@@ -74,6 +127,19 @@ export function render(container) {
     const item = items.find((i) => i.id === row.dataset.id);
 
     if (button.dataset.action === 'open') openEditor(item.id);
+
+    // "Metti qui": la task suggerita prende l'inizio del buco libero
+    if (button.dataset.action === 'place') {
+      const gap = button.closest('[data-gap-start]');
+      const start = Number(gap.dataset.gapStart);
+      const length = Number(gap.dataset.gapEnd) - start;
+      save(updateItem(item, {
+        scheduled_date: todayISO(),
+        start_time: minToTime(start),
+        duration_min: Math.min(item.duration_min ?? 30, length),
+      }), () => restoreFocus(container, item.id, '[data-action="open"]'));
+      showToast(`${item.title}: alle ${minToTime(start)}`);
+    }
 
     if (button.dataset.action === 'to-today') {
       save(updateItem(item, { scheduled_date: todayISO() }), () => focusAfterMove(container, item.id));
@@ -143,23 +209,67 @@ function cardEntry(label, item, time) {
     </div>`;
 }
 
-// ---------- Avanzamento: conta solo le task (gli appuntamenti non si spuntano) ----------
-function progress(dayItems) {
-  const tasks = dayItems.filter((i) => i.type === 'task');
-  const done = tasks.filter((i) => i.done).length;
-  const percent = tasks.length ? Math.round((done / tasks.length) * 100) : 0;
+// ---------- Il punto della situazione: frasi invece di una griglia di numeri ----------
+// (gli obiettivi si aggiungeranno qui nella Fase 11)
+function situation(topLevel, dayItems, overdue, today) {
+  const isTask = (i) => i.type === 'task';
+  const dayTasks = dayItems.filter(isTask);
+  const dayDone = dayTasks.filter((i) => i.done).length;
+
+  const monday = startOfWeek(today);
+  const sunday = addDays(monday, 6);
+  const weekTasks = topLevel.filter((i) => isTask(i) && i.scheduled_date >= monday && i.scheduled_date <= sunday);
+  const weekDone = weekTasks.filter((i) => i.done).length;
+
+  const dueSoon = topLevel.filter((i) => isTask(i) && !i.done && i.due_date
+    && i.due_date >= today && i.due_date <= addDays(today, 3)).length;
+
+  let first = dayTasks.length
+    ? `Oggi hai fatto <strong class="num">${dayDone}</strong> task su <span class="num">${dayTasks.length}</span>`
+    : 'Oggi non hai task in programma';
+  first += weekTasks.length
+    ? `, questa settimana <strong class="num">${weekDone}</strong> su <span class="num">${weekTasks.length}</span>.`
+    : '.';
+
+  const parts = [];
+  if (overdue.length) parts.push(`${overdue.length} ${overdue.length === 1 ? 'è rimasta' : 'sono rimaste'} indietro`);
+  if (dueSoon) parts.push(`${dueSoon} ${dueSoon === 1 ? 'scade' : 'scadono'} entro 3 giorni`);
+  let second = '';
+  if (parts.length) second = parts.join(' e ') + '.';
+  else if (dayTasks.length && dayDone === dayTasks.length) second = 'Sei in pari con tutto: bel lavoro.';
+  second = second.charAt(0).toUpperCase() + second.slice(1);
+
+  const percent = dayTasks.length ? Math.round((dayDone / dayTasks.length) * 100) : 0;
 
   return `
-    <div class="progress">
-      <div class="progress__label">
-        <span><strong class="num">${done}</strong> di <span class="num">${tasks.length}</span> task completate</span>
-        <span class="num">${percent}%</span>
-      </div>
-      <div class="progress__track" role="progressbar" aria-label="Avanzamento della giornata"
+    <section class="section situation" aria-labelledby="h-situation">
+      <h2 class="section__head" id="h-situation">Il punto</h2>
+      <p class="situation__text">${first} ${second}</p>
+      <div class="progress__track" role="progressbar" aria-label="Task di oggi completate"
            aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}">
         <div class="progress__fill" style="width: ${percent}%"></div>
       </div>
-    </div>`;
+    </section>`;
+}
+
+// ---------- Prima di tutto: al massimo 3 task, le più importanti o urgenti ----------
+function focusSection(topLevel, today) {
+  const soon = addDays(today, 1);
+  const list = topLevel
+    .filter((i) => i.type === 'task' && !i.done)
+    // di oggi o rimaste indietro, oppure senza data ma in scadenza entro domani
+    .filter((i) => (i.scheduled_date && i.scheduled_date <= today) || (!i.scheduled_date && i.due_date && i.due_date <= soon))
+    .filter((i) => i.priority === 'high' || (i.due_date && i.due_date <= soon))
+    .sort((a, b) => (priorityRank(a) - priorityRank(b))
+      || (a.due_date ?? '9999').localeCompare(b.due_date ?? '9999'))
+    .slice(0, 3);
+
+  if (!list.length) return '';
+  return `
+    <section class="section" aria-labelledby="h-focus">
+      <h2 class="section__head" id="h-focus">${icon('flag')}Prima di tutto</h2>
+      <ul class="group group--focus">${list.map((i) => itemRow(i, { stats, showDate: i.scheduled_date !== today })).join('')}</ul>
+    </section>`;
 }
 
 // ---------- Rimaste indietro ----------
@@ -183,9 +293,8 @@ function overdueSection(overdue) {
 
 // ---------- In giornata (senza orario): prima le non fatte, poi per priorità ----------
 function allDaySection(allDay) {
-  const rank = { high: 0, medium: 1, low: 2 };
   const sorted = [...allDay].sort((a, b) =>
-    (a.done - b.done) || ((rank[a.priority] ?? 3) - (rank[b.priority] ?? 3)));
+    (a.done - b.done) || (priorityRank(a) - priorityRank(b)));
 
   return `
     <section class="section" aria-labelledby="h-allday">
@@ -195,9 +304,17 @@ function allDaySection(allDay) {
 }
 
 // ---------- Fasce orarie: prima del lavoro, lavoro, dopo lavoro ----------
-function daySlots(timed, hours, now) {
+function daySlots(timed, hours, now, today) {
+  // Buchi liberi da adesso in poi, con i suggerimenti (senza ripetere la stessa task in due buchi)
+  const used = new Set();
+  const gaps = freeGaps(today, now).map((gap) => {
+    const suggestions = suggestionsFor(gap.slot, today, { exclude: used });
+    suggestions.forEach((s) => used.add(s.id));
+    return { ...gap, suggestions };
+  });
+
   if (!hours) {
-    return slot({ id: 'free', label: 'Giornata libera', iconName: 'sun', list: timed, from: 0, to: 1440, now });
+    return slot({ id: 'free', label: 'Giornata libera', iconName: 'sun', list: timed, gaps, from: 0, to: 1440, now });
   }
 
   const start = timeToMin(hours.start);
@@ -206,29 +323,32 @@ function daySlots(timed, hours, now) {
   const before = timed.filter((i) => minOf(i) < start);
 
   return `
-    ${before.length ? slot({ id: 'before', label: 'Prima del lavoro', iconName: 'sunrise', list: before, from: 0, to: start, now }) : ''}
-    ${slot({ id: 'work', label: 'Lavoro', iconName: 'briefcase', list: timed.filter((i) => minOf(i) >= start && minOf(i) < end), from: start, to: end, now, work: true })}
-    ${slot({ id: 'after', label: 'Dopo lavoro', iconName: 'sunset', list: timed.filter((i) => minOf(i) >= end), from: end, to: 1440, now })}
+    ${before.length ? slot({ id: 'before', label: 'Prima del lavoro', iconName: 'sunrise', list: before, gaps, from: 0, to: start, now }) : ''}
+    ${slot({ id: 'work', label: 'Lavoro', iconName: 'briefcase', list: timed.filter((i) => minOf(i) >= start && minOf(i) < end), gaps, from: start, to: end, now, work: true })}
+    ${slot({ id: 'after', label: 'Dopo lavoro', iconName: 'sunset', list: timed.filter((i) => minOf(i) >= end), gaps, from: end, to: 1440, now })}
   `;
 }
 
-function slot({ id, label, iconName, list, from, to, now, work = false }) {
+function slot({ id, label, iconName, list, gaps, from, to, now, work = false }) {
   let range = `${minToTime(from)}–${minToTime(to)}`;
   if (from === 0 && to === 1440) range = '';
   else if (from === 0) range = `fino alle ${minToTime(to)}`;
   else if (to === 1440) range = `dalle ${minToTime(from)}`;
 
-  const rows = list.map((i) => itemRow(i, { showTime: true, stats }));
-
-  // Linea "ora attuale", solo nella fascia in cui ci troviamo adesso
-  if (now >= from && now < to) {
-    const index = list.findIndex((i) => timeToMin(i.start_time) > now);
-    const line = `<li class="now-line" aria-label="Ora attuale ${minToTime(now)}"><span class="num" aria-hidden="true">${minToTime(now)}</span></li>`;
-    rows.splice(index === -1 ? rows.length : index, 0, line);
+  // Righe ordinate per minuto: elementi, buchi liberi e linea dell'ora attuale
+  // (a parità di minuto: prima la linea, poi il buco, poi l'elemento)
+  const rows = list.map((i) => ({ min: timeToMin(i.start_time), order: 2, html: itemRow(i, { showTime: true, stats }) }));
+  for (const gap of gaps.filter((g) => g.start >= from && g.start < to)) {
+    rows.push({ min: gap.start, order: 1, html: gapRow(gap) });
   }
+  if (now >= from && now < to) {
+    rows.push({ min: now, order: 0, html: `<li class="now-line" aria-label="Ora attuale ${minToTime(now)}"><span class="num" aria-hidden="true">${minToTime(now)}</span></li>` });
+  }
+  rows.sort((a, b) => a.min - b.min || a.order - b.order);
 
-  const body = list.length
-    ? `<ul class="group">${rows.join('')}</ul>`
+  const hasContent = rows.some((r) => r.order > 0);
+  const body = hasContent
+    ? `<ul class="group">${rows.map((r) => r.html).join('')}</ul>`
     : `<div class="group"><p class="empty">Niente in programma</p></div>`;
 
   return `
@@ -236,4 +356,26 @@ function slot({ id, label, iconName, list, from, to, now, work = false }) {
       <h2 class="section__head" id="h-${id}">${icon(iconName)}${label}<span class="section__range num">${range}</span></h2>
       ${body}
     </section>`;
+}
+
+// Un buco libero con i suggerimenti: "Metti qui" pianifica la task all'inizio del buco
+function gapRow(gap) {
+  const length = gap.end - gap.start;
+  const suggestions = gap.suggestions.length
+    ? `<ul class="gap__list">${gap.suggestions.map((item) => {
+        const area = areaById(item.area_id);
+        return `
+          <li class="suggestion" data-id="${item.id}" ${areaAttrs(area)}>
+            <span class="dot"></span>
+            <button class="suggestion__title" type="button" data-action="open">${escapeHtml(item.title)}</button>
+            <button class="btn btn--sm" type="button" data-action="place">Metti qui</button>
+          </li>`;
+      }).join('')}</ul>`
+    : `<p class="gap__empty">Niente da suggerire per questa fascia.</p>`;
+
+  return `
+    <li class="gap" data-gap-start="${gap.start}" data-gap-end="${gap.end}">
+      <p class="gap__head"><span class="num">${minToTime(gap.start)}–${minToTime(gap.end)}</span> libero, <span class="num">${formatDuration(length)}</span></p>
+      ${suggestions}
+    </li>`;
 }

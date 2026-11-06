@@ -14,6 +14,8 @@ create table public.areas (
   color      text not null check (color ~ '^#[0-9a-fA-F]{6}$'),
   -- "double face": ogni area appartiene alla vita lavorativa o a quella personale
   face       text not null default 'personal' check (face in ('work', 'personal')),
+  -- quando ci si lavora di solito: in orario di lavoro, fuori orario, sempre (vedi migrations/003)
+  slot       text not null default 'any' check (slot in ('work', 'free', 'any')),
   position   int  not null default 0,
   created_at timestamptz not null default now(),
 

@@ -22,6 +22,7 @@ function renderView(name, view, { isNavigation }) {
   // così quelli della vista precedente non restano attivi
   main.onclick = null;
   main.onchange = null;
+  main.dataset.view = name; // la vista Oggi lo usa per sapere se è ancora quella visibile
   view.render(main);
 
   // Evidenzia la voce attiva nella navigazione (aria-current è letto anche dagli screen reader)

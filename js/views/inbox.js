@@ -3,7 +3,7 @@
 
 import { items, areas, setDone } from '../data/db.js';
 import { icon } from '../icons.js';
-import { itemRow, restoreFocus, showToast, areaAttrs, escapeHtml, saveErrorMessage, childStats } from '../ui.js';
+import { itemRow, restoreFocus, showToast, areaAttrs, escapeHtml, saveErrorMessage, childStats, priorityRank } from '../ui.js';
 import { openEditor } from '../item-editor.js';
 
 export const title = 'Da pianificare';
@@ -32,11 +32,10 @@ function matchesFilters(item) {
 }
 
 export function render(container) {
-  const rank = { high: 0, medium: 1, low: 2 };
   const all = unscheduled();
   const list = all
     .filter(matchesFilters)
-    .sort((a, b) => (a.done - b.done) || ((rank[a.priority] ?? 3) - (rank[b.priority] ?? 3)));
+    .sort((a, b) => (a.done - b.done) || (priorityRank(a) - priorityRank(b)));
 
   const stats = childStats();
   const rows = list.map((item) => itemRow(item, {

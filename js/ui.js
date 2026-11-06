@@ -31,6 +31,12 @@ export function endTime(item) {
 
 const priorityLabels = { high: 'alta', medium: 'media', low: 'bassa' };
 
+// Ordine di importanza per ordinare le liste: alta 0, media 1, bassa 2, nessuna 3
+const priorityOrder = { high: 0, medium: 1, low: 2 };
+export function priorityRank(item) {
+  return priorityOrder[item.priority] ?? 3;
+}
+
 function dueLabel(due) {
   const today = todayISO();
   if (due < today) return { text: 'Scaduta', late: true };
