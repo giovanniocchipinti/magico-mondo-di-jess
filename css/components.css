@@ -745,3 +745,259 @@
   display: flex;
   margin-right: calc(var(--s-2) * -1);
 }
+
+/* ---------- Titolo cliccabile nelle righe (apre il dettaglio) ---------- */
+button.item__title {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  color: inherit;
+}
+
+button.item__title:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
+}
+
+/* ---------- Filtri ---------- */
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+/* ---------- Pannello di dettaglio ---------- */
+.sheet--tall {
+  max-height: 92dvh;
+}
+
+.sheet--tall .sheet__body {
+  padding-bottom: 0;
+}
+
+/* I pulsanti Elimina/Salva restano sempre visibili in fondo, anche scorrendo */
+.sheet__footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin: 0 calc(var(--s-4) * -1);
+  padding: var(--s-3) var(--s-4) calc(var(--s-3) + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+@media (min-width: 640px) {
+  .sheet__footer {
+    margin: 0 calc(var(--s-5) * -1);
+    padding: var(--s-3) var(--s-5);
+  }
+}
+
+.form-field legend {
+  margin-bottom: var(--s-1);
+  padding: 0;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.form-hint {
+  font-size: var(--fs-sm);
+  color: var(--text-3);
+}
+
+.form-error {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--danger);
+}
+
+.form-error:empty {
+  display: none;
+}
+
+.field-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--s-2);
+}
+
+.field-row > .field {
+  flex: 1;
+  min-width: 0;
+}
+
+.field-inline {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--s-1);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.field--area {
+  min-height: 112px;
+  padding: var(--s-3) var(--s-4);
+  line-height: 1.5;
+  resize: vertical;
+}
+
+select.field {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-2) 50%), linear-gradient(135deg, var(--text-2) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+
+/* Scelta tra opzioni (tipo, orario, priorità): radio button con l'aspetto di una barra a segmenti */
+.segmented {
+  display: flex;
+  padding: 3px;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+}
+
+.segmented__option {
+  position: relative;
+  flex: 1;
+}
+
+.segmented__option input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.segmented__option span {
+  display: grid;
+  place-items: center;
+  min-height: 38px;
+  padding: 0 var(--s-2);
+  border-radius: calc(var(--r-md) - 3px);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-2);
+}
+
+.segmented__option input:checked + span {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-subtle);
+}
+
+.segmented__option input:focus-visible + span {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.segmented__option input:disabled + span {
+  opacity: 0.4;
+}
+
+.btn--danger {
+  color: var(--danger);
+}
+
+.link-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---------- Sotto-elementi nel dettaglio ---------- */
+.subitems {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--border);
+}
+
+.subitems__title {
+  display: flex;
+  gap: var(--s-2);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.subitems__list {
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+.subitem {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: var(--tap);
+  padding: 0 var(--s-1) 0 var(--s-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.subitem:last-child {
+  border-bottom: 0;
+}
+
+.subitem .check {
+  margin: 0 -8px 0 -10px;
+}
+
+.subitem__title {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--tap);
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.subitem.is-done .subitem__title {
+  color: var(--text-3);
+  text-decoration: line-through;
+}
+
+/* ---------- Azione dentro l'avviso (es. Annulla) ---------- */
+.toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.toast__action {
+  flex: none;
+  min-height: 36px;
+  margin: calc(var(--s-2) * -1) calc(var(--s-2) * -1) calc(var(--s-2) * -1) 0;
+  padding: 0 var(--s-3);
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  font-weight: 700;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

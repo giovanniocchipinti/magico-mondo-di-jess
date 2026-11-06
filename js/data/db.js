@@ -10,6 +10,12 @@ export const areas = [];
 export const items = [];
 export const workHours = {}; // { 1: { start: '07:00', end: '15:00' }, ..., 7: null }
 
+// Cambia a ogni logout: serve a riconoscere operazioni partite con la sessione precedente
+let sessionGeneration = 0;
+export function currentGeneration() {
+  return sessionGeneration;
+}
+
 // Postgres restituisce gli orari come "07:30:00": a noi bastano ore e minuti
 function hhmm(time) {
   return time ? time.slice(0, 5) : null;
@@ -89,8 +95,33 @@ export async function updateItem(item, changes) {
   }
 }
 
+// Segna fatto / non fatto (un solo posto per la regola su done_at)
+export function setDone(item, done) {
+  return updateItem(item, { done, done_at: done ? new Date().toISOString() : null });
+}
+
+// Toglie dalla memoria un elemento e i suoi sotto-elementi; restituisce quelli tolti
+// (servono per l'"Annulla"). Il database non viene toccato.
+export function removeLocally(item) {
+  const removed = items.filter((i) => i.id === item.id || i.parent_id === item.id);
+  for (const r of removed) items.splice(items.indexOf(r), 1);
+  return removed;
+}
+
+// Rimette in memoria elementi tolti con removeLocally
+export function restoreItems(list) {
+  items.push(...list);
+}
+
+// Elimina sul database. I sotto-elementi spariscono da soli: "on delete cascade" nello schema.
+export async function deleteItem(id) {
+  const { error } = await supabase.from('items').delete().eq('id', id);
+  if (error) throw error;
+}
+
 // Al logout svuotiamo la memoria, così i dati non restano nella pagina
 export function clearData() {
+  sessionGeneration += 1;
   areas.length = 0;
   items.length = 0;
   for (const key of Object.keys(workHours)) delete workHours[key];

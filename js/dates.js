@@ -87,3 +87,11 @@ export function formatIn(minutes) {
   const m = minutes % 60;
   return m ? `tra ${h} h ${m} min` : `tra ${h} h`;
 }
+
+// 90 -> "1 h 30", 45 -> "45 min", 120 -> "2 h"
+export function formatDuration(minutes) {
+  if (minutes < 60) return `${minutes} min`;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m ? `${h} h ${m}` : `${h} h`;
+}

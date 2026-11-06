@@ -3,7 +3,8 @@
 
 import { areas, createItem } from './data/db.js';
 import { currentRoute, refresh } from './router.js';
-import { areaAttrs, escapeHtml } from './ui.js';
+import { areaAttrs, escapeHtml, showToast } from './ui.js';
+import { openEditor } from './item-editor.js';
 import { todayISO } from './dates.js';
 
 export function initQuickAdd() {
@@ -51,13 +52,14 @@ export function initQuickAdd() {
     // Disattiviamo il pulsante mentre salviamo: evita doppi invii con due tocchi veloci
     submit.disabled = true;
     try {
-      await createItem({
+      const item = await createItem({
         title,
         area_id: form.elements.area.value,
         scheduled_date: currentRoute() === 'oggi' ? todayISO() : null,
       });
       dialog.close();
       refresh();
+      showToast(`Aggiunta: ${title}`, { actionLabel: 'Aggiungi dettagli', onAction: () => openEditor(item.id) });
     } catch {
       // Il pannello resta aperto con il testo scritto: si può riprovare senza riscrivere
       hint.textContent = 'Non salvata. Controlla la connessione e premi di nuovo Aggiungi.';

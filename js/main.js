@@ -3,6 +3,8 @@
 import { fillIcons, icon } from './icons.js';
 import { initRouter, refresh } from './router.js';
 import { initQuickAdd } from './quick-add.js';
+import { initItemEditor } from './item-editor.js';
+import { initToast, flushToast } from './ui.js';
 import { isConfigured } from './supabase.js';
 import { onAuthChange, signIn, signUp, signOut } from './auth.js';
 import { loadAll, ensureDefaults, clearData } from './data/db.js';
@@ -174,8 +176,21 @@ if (!isConfigured) {
 } else {
   initLoginForm();
   initQuickAdd();
+  initItemEditor();
+  initToast();
+
+  // Il pannello di dettaglio avvisa quando i dati cambiano: ridisegniamo la vista
+  // e rimettiamo il focus sull'elemento appena modificato (se è ancora visibile)
+  document.addEventListener('agenda:changed', (e) => {
+    if (appEl.hidden) return;
+    refresh();
+    const id = e.detail.focusId;
+    if (id) main.querySelector(`[data-id="${id}"] [data-action="open"]`)?.focus();
+  });
 
   document.getElementById('logout').addEventListener('click', async () => {
+    // Un'eliminazione in attesa di "Annulla" va inviata ora, finché la sessione è valida
+    flushToast();
     await signOut();
   });
 

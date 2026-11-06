@@ -36,6 +36,7 @@
 
   /* Ombra solo per ciò che "galleggia" (FAB, pannelli) */
   --shadow-float: 0 6px 20px rgb(0 0 0 / 0.14), 0 1px 3px rgb(0 0 0 / 0.1);
+  --shadow-subtle: 0 1px 2px rgb(0 0 0 / 0.08);  /* opzione scelta nei controlli a segmenti */
 
   --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
   --dur: 160ms;
@@ -88,6 +89,7 @@
     --now: #ff6b5e;
     --area-lift: 30%;
     --shadow-float: 0 6px 20px rgb(0 0 0 / 0.5);
+    --shadow-subtle: 0 1px 2px rgb(0 0 0 / 0.4);
   }
 }
 
@@ -109,6 +111,7 @@
   --now: #ff6b5e;
   --area-lift: 30%;
   --shadow-float: 0 6px 20px rgb(0 0 0 / 0.5);
+  --shadow-subtle: 0 1px 2px rgb(0 0 0 / 0.4);
 }
 
 /* Colore dell'area: ogni elemento con data-area riceve --area (dal JS)

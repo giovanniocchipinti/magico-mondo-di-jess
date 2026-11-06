@@ -1,8 +1,9 @@
 // Vista Oggi: cosa c'è adesso, cosa viene dopo, e la giornata divisa in fasce
 
-import { items, workHours, updateItem } from '../data/db.js';
+import { items, workHours, updateItem, setDone } from '../data/db.js';
+import { openEditor } from '../item-editor.js';
 import { icon } from '../icons.js';
-import { itemRow, areaById, areaAttrs, escapeHtml, endTime, restoreFocus, showToast } from '../ui.js';
+import { itemRow, areaById, areaAttrs, escapeHtml, endTime, restoreFocus, showToast, saveErrorMessage, childStats } from '../ui.js';
 import { todayISO, isoWeekday, formatDayLong, nowMinutes, timeToMin, minToTime, formatIn } from '../dates.js';
 
 export const title = 'Oggi';
@@ -11,7 +12,11 @@ export function eyebrow() {
   return formatDayLong(todayISO());
 }
 
+// Contatori dei sotto-elementi, ricalcolati a ogni render (vedi childStats in ui.js)
+let stats = new Map();
+
 export function render(container) {
+  stats = childStats();
   const today = todayISO();
   const now = nowMinutes();
 
@@ -38,10 +43,11 @@ export function render(container) {
   // guardiamo su quale elemento è avvenuto l'evento tramite data-action
   // Salva una modifica: la vista si aggiorna subito, e se il database rifiuta
   // la ridisegniamo con i valori di prima e mostriamo l'errore
-  function save(item, changes, afterRender) {
-    updateItem(item, changes).catch(() => {
+  // saving = la promessa restituita da updateItem/setDone (che hanno già aggiornato la memoria)
+  function save(saving, afterRender) {
+    saving.catch((error) => {
       render(container);
-      showToast('Modifica non salvata. Controlla la connessione e riprova.');
+      showToast(saveErrorMessage(error));
     });
     render(container);
     afterRender();
@@ -53,13 +59,11 @@ export function render(container) {
     const item = items.find((i) => i.id === row.dataset.id);
 
     if (e.target.dataset.action === 'toggle') {
-      const done = e.target.checked;
-      save(item, { done, done_at: done ? new Date().toISOString() : null },
-        () => restoreFocus(container, item.id, 'input[type="checkbox"]'));
+      save(setDone(item, e.target.checked), () => restoreFocus(container, item.id, 'input[type="checkbox"]'));
     }
 
     if (e.target.dataset.action === 'move' && e.target.value) {
-      save(item, { scheduled_date: e.target.value }, () => focusAfterMove(container, item.id));
+      save(updateItem(item, { scheduled_date: e.target.value }), () => focusAfterMove(container, item.id));
     }
   };
 
@@ -69,8 +73,10 @@ export function render(container) {
     const row = button.closest('[data-id]');
     const item = items.find((i) => i.id === row.dataset.id);
 
+    if (button.dataset.action === 'open') openEditor(item.id);
+
     if (button.dataset.action === 'to-today') {
-      save(item, { scheduled_date: todayISO() }, () => focusAfterMove(container, item.id));
+      save(updateItem(item, { scheduled_date: todayISO() }), () => focusAfterMove(container, item.id));
     }
 
     // "Sposta": apre il calendario nativo del browser collegato all'input nascosto
@@ -159,6 +165,7 @@ function progress(dayItems) {
 // ---------- Rimaste indietro ----------
 function overdueSection(overdue) {
   const rows = overdue.map((item) => itemRow(item, {
+    stats,
     showDate: true,
     lateDate: true,
     actions: `
@@ -183,7 +190,7 @@ function allDaySection(allDay) {
   return `
     <section class="section" aria-labelledby="h-allday">
       <h2 class="section__head" id="h-allday">${icon('listTodo')}In giornata</h2>
-      <ul class="group">${sorted.map((i) => itemRow(i)).join('')}</ul>
+      <ul class="group">${sorted.map((i) => itemRow(i, { stats })).join('')}</ul>
     </section>`;
 }
 
@@ -211,7 +218,7 @@ function slot({ id, label, iconName, list, from, to, now, work = false }) {
   else if (from === 0) range = `fino alle ${minToTime(to)}`;
   else if (to === 1440) range = `dalle ${minToTime(from)}`;
 
-  const rows = list.map((i) => itemRow(i, { showTime: true }));
+  const rows = list.map((i) => itemRow(i, { showTime: true, stats }));
 
   // Linea "ora attuale", solo nella fascia in cui ci troviamo adesso
   if (now >= from && now < to) {
