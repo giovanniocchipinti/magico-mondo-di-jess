@@ -57,6 +57,11 @@
   --warning: #b54708;
   --now: #d92d20;         /* linea dell'ora attuale */
 
+  /* Colori del marchio nella schermata di accesso (gli stessi delle aree iniziali) */
+  --mark-1: #2f7a4b;
+  --mark-2: #d24f03;
+  --mark-3: #b0356a;
+
   /* Quanto "schiarire" i colori delle aree (0% in chiaro, vedi tema scuro) */
   --area-lift: 0%;
 }

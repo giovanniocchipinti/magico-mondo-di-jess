@@ -67,6 +67,11 @@ fieldset {
   min-width: 0;
 }
 
+/* L'attributo hidden deve vincere anche su display: grid/flex dei componenti */
+[hidden] {
+  display: none !important;
+}
+
 /* Orari e numeri: Manrope con cifre a larghezza fissa, così si allineano in colonna */
 .num {
   font-family: var(--font-num);

@@ -29,7 +29,35 @@
 <body>
   <a class="skip-link" href="#main">Vai al contenuto</a>
 
-  <div class="app">
+  <!-- Schermata di accesso: visibile solo quando non c'è nessuno loggato -->
+  <div class="login" id="login" hidden>
+    <div class="login__inner">
+      <!-- Marchio: tre binari, uno per area (Vivaio, Kroma, Personale) -->
+      <div class="login__mark" aria-hidden="true"><span></span><span></span><span></span></div>
+      <h1 class="login__title">Agenda</h1>
+      <p class="login__lead">Vivaio, Kroma Web Lab e vita personale, giorno per giorno.</p>
+
+      <p class="login__notice" id="login-config" hidden>
+        Manca il collegamento a Supabase: inserisci URL e chiave del progetto in <code>js/config.js</code>.
+      </p>
+
+      <form class="login__form" id="login-form" novalidate>
+        <div class="form-field">
+          <label for="login-email">Email</label>
+          <input class="field" id="login-email" name="email" type="email" autocomplete="email" required>
+        </div>
+        <div class="form-field">
+          <label for="login-password">Password</label>
+          <input class="field" id="login-password" name="password" type="password" autocomplete="current-password" minlength="8" required>
+        </div>
+        <p class="login__message" id="login-message" role="alert"></p>
+        <button class="btn btn--primary btn--block" type="submit" id="login-submit">Accedi</button>
+        <button class="btn btn--ghost btn--block" type="button" id="login-switch">Prima volta? Crea l'account</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="app" id="app" hidden>
     <!-- Navigazione: barra in basso su mobile, sidebar su desktop -->
     <nav class="nav" aria-label="Viste">
       <div class="nav__brand">Agenda</div>
@@ -45,7 +73,10 @@
           <p class="topbar__eyebrow" id="view-eyebrow"></p>
           <h1 class="topbar__title" id="view-title" tabindex="-1"></h1>
         </div>
-        <button class="icon-btn" id="theme-toggle" type="button"></button>
+        <div class="topbar__actions">
+          <button class="icon-btn" id="theme-toggle" type="button"></button>
+          <button class="icon-btn" id="logout" type="button" aria-label="Esci" title="Esci"><span data-icon="logOut"></span></button>
+        </div>
       </header>
 
       <!-- Qui il router inserisce la vista corrente -->
@@ -54,7 +85,7 @@
   </div>
 
   <!-- Pulsante di aggiunta rapida, sempre visibile -->
-  <button class="fab" id="fab" type="button" aria-label="Aggiungi task" aria-keyshortcuts="N">
+  <button class="fab" id="fab" type="button" aria-label="Aggiungi task" aria-keyshortcuts="N" hidden>
     <span data-icon="plus"></span>
   </button>
 
@@ -73,6 +104,8 @@
       <button class="btn btn--primary btn--block" type="submit">Aggiungi</button>
     </form>
   </dialog>
+
+  <div class="toast" id="toast" role="status" hidden></div>
 
   <script type="module" src="js/main.js"></script>
 </body>

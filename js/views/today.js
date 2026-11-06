@@ -1,8 +1,8 @@
 // Vista Oggi: cosa c'è adesso, cosa viene dopo, e la giornata divisa in fasce
 
-import { items, workHours } from '../data/fake-data.js';
+import { items, workHours, updateItem } from '../data/db.js';
 import { icon } from '../icons.js';
-import { itemRow, areaById, areaAttrs, escapeHtml, endTime, restoreFocus } from '../ui.js';
+import { itemRow, areaById, areaAttrs, escapeHtml, endTime, restoreFocus, showToast } from '../ui.js';
 import { todayISO, isoWeekday, formatDayLong, nowMinutes, timeToMin, minToTime, formatIn } from '../dates.js';
 
 export const title = 'Oggi';
@@ -15,12 +15,14 @@ export function render(container) {
   const today = todayISO();
   const now = nowMinutes();
 
-  const dayItems = items.filter((i) => i.scheduled_date === today);
+  // i sotto-elementi (parent_id) compaiono dentro il loro genitore, non nell'elenco principale
+  const topLevel = items.filter((i) => !i.parent_id);
+  const dayItems = topLevel.filter((i) => i.scheduled_date === today);
   const allDay = dayItems.filter((i) => !i.start_time);
   const timed = dayItems
     .filter((i) => i.start_time)
     .sort((a, b) => a.start_time.localeCompare(b.start_time));
-  const overdue = items
+  const overdue = topLevel
     .filter((i) => i.type === 'task' && !i.done && i.scheduled_date && i.scheduled_date < today)
     .sort((a, b) => a.scheduled_date.localeCompare(b.scheduled_date));
 
@@ -34,22 +36,30 @@ export function render(container) {
 
   // Un solo gestore per tutta la vista ("event delegation"):
   // guardiamo su quale elemento è avvenuto l'evento tramite data-action
+  // Salva una modifica: la vista si aggiorna subito, e se il database rifiuta
+  // la ridisegniamo con i valori di prima e mostriamo l'errore
+  function save(item, changes, afterRender) {
+    updateItem(item, changes).catch(() => {
+      render(container);
+      showToast('Modifica non salvata. Controlla la connessione e riprova.');
+    });
+    render(container);
+    afterRender();
+  }
+
   container.onchange = (e) => {
     const row = e.target.closest('[data-id]');
     if (!row) return;
     const item = items.find((i) => i.id === row.dataset.id);
 
     if (e.target.dataset.action === 'toggle') {
-      item.done = e.target.checked;
-      item.done_at = item.done ? new Date().toISOString() : null;
-      render(container);
-      restoreFocus(container, item.id, 'input[type="checkbox"]');
+      const done = e.target.checked;
+      save(item, { done, done_at: done ? new Date().toISOString() : null },
+        () => restoreFocus(container, item.id, 'input[type="checkbox"]'));
     }
 
     if (e.target.dataset.action === 'move' && e.target.value) {
-      item.scheduled_date = e.target.value;
-      render(container);
-      focusAfterMove(container, item.id);
+      save(item, { scheduled_date: e.target.value }, () => focusAfterMove(container, item.id));
     }
   };
 
@@ -60,9 +70,7 @@ export function render(container) {
     const item = items.find((i) => i.id === row.dataset.id);
 
     if (button.dataset.action === 'to-today') {
-      item.scheduled_date = todayISO();
-      render(container);
-      focusAfterMove(container, item.id);
+      save(item, { scheduled_date: todayISO() }, () => focusAfterMove(container, item.id));
     }
 
     // "Sposta": apre il calendario nativo del browser collegato all'input nascosto
@@ -109,7 +117,7 @@ function nowCard(timed, allDay, now) {
       </div>`;
 
   const nextCol = next
-    ? cardEntry(`Dopo · ${formatIn(timeToMin(next.start_time) - now)}`, next, `alle ${next.start_time}`)
+    ? cardEntry(`Dopo, ${formatIn(timeToMin(next.start_time) - now)}`, next, `alle ${next.start_time}`)
     : `<div class="now-card__col">
         <p class="eyebrow">Dopo</p>
         <p class="now-card__title">Niente altro in programma</p>
@@ -120,7 +128,7 @@ function nowCard(timed, allDay, now) {
 
 function cardEntry(label, item, time) {
   const area = areaById(item.area_id);
-  const where = item.location ? ` · ${escapeHtml(item.location)}` : '';
+  const where = item.location ? `, ${escapeHtml(item.location)}` : '';
   return `
     <div class="now-card__col" ${areaAttrs(area)}>
       <p class="eyebrow">${label}</p>

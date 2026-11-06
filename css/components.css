@@ -507,10 +507,8 @@
 }
 
 .eyebrow {
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: var(--fs-sm);
+  font-weight: 600;
   color: var(--text-3);
 }
 
@@ -633,4 +631,117 @@
   border: 1px solid var(--border);
   border-radius: var(--r-sm);
   background: var(--sw);
+}
+
+/* ---------- Campo con etichetta ---------- */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.form-field label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.sheet__hint.is-error {
+  color: var(--danger);
+}
+
+/* ---------- Avviso in basso (toast) ---------- */
+.toast {
+  position: fixed;
+  left: var(--s-4);
+  right: var(--s-4);
+  bottom: calc(var(--nav-h) + 88px + env(safe-area-inset-bottom));
+  z-index: 20;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-md);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--fs-sm);
+  box-shadow: var(--shadow-float);
+}
+
+@media (min-width: 1024px) {
+  .toast {
+    bottom: var(--s-7);
+  }
+}
+
+/* ---------- Schermata di accesso ---------- */
+.login {
+  display: grid;
+  min-height: 100dvh;
+  padding: calc(var(--s-8) + env(safe-area-inset-top)) var(--s-4) var(--s-8);
+}
+
+.login__inner {
+  width: 100%;
+  max-width: 380px;
+  margin: auto;
+}
+
+/* Tre binari di lunghezza diversa, uno per area: come tre vite che scorrono in parallelo */
+.login__mark {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: var(--s-6);
+}
+
+.login__mark span {
+  display: block;
+  height: 10px;
+  border-radius: var(--r-full);
+}
+
+.login__mark span:nth-child(1) { width: 72px; background: color-mix(in oklab, var(--mark-1), white var(--area-lift)); }
+.login__mark span:nth-child(2) { width: 112px; margin-left: 24px; background: color-mix(in oklab, var(--mark-2), white var(--area-lift)); }
+.login__mark span:nth-child(3) { width: 56px; margin-left: 52px; background: color-mix(in oklab, var(--mark-3), white var(--area-lift)); }
+
+.login__title {
+  font-size: 2.5rem;
+  letter-spacing: -0.03em;
+}
+
+.login__lead {
+  margin-top: var(--s-2);
+  color: var(--text-2);
+}
+
+.login__notice {
+  margin-top: var(--s-6);
+  padding: var(--s-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  font-size: var(--fs-sm);
+}
+
+.login__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  margin-top: var(--s-7);
+}
+
+.login__message {
+  min-height: 1.5em;
+  margin-bottom: calc(var(--s-2) * -1);
+  font-size: var(--fs-sm);
+  color: var(--danger);
+}
+
+.login__message:empty {
+  min-height: 0;
+}
+
+.topbar__actions {
+  display: flex;
+  margin-right: calc(var(--s-2) * -1);
 }

@@ -1,6 +1,6 @@
 // Pezzi di interfaccia condivisi tra le viste
 
-import { areas } from './data/fake-data.js';
+import { areas } from './data/db.js';
 import { icon } from './icons.js';
 import { todayISO, addDays, formatDayShort, timeToMin, minToTime } from './dates.js';
 
@@ -85,6 +85,16 @@ export function itemRow(item, { showTime = false, showDate = false, lateDate = f
       </div>
       ${flag}
     </li>`;
+}
+
+// Messaggio breve in basso (es. un errore di salvataggio). role="status" lo fa leggere agli screen reader.
+let toastTimer;
+export function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toast.hidden = true; }, 5000);
 }
 
 // Dopo un nuovo render il focus andrebbe perso: lo rimettiamo sulla stessa checkbox/pulsante

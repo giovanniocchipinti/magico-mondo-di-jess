@@ -8,4 +8,6 @@
 - Interfaccia in italiano, settimana da lunedì, orari 24h, fuso Europe/Rome (vedi js/dates.js).
 - Design: niente serif, gradienti viola/blu, glassmorfismo, emoji come icone, card uguali con ombre pesanti. Font Plus Jakarta Sans (UI) + Manrope (numeri, classe .num). Icone Lucide in js/icons.js.
 - Colori solo tramite variabili in css/tokens.css; colori area con data-area + --area (vedi areaAttrs in js/ui.js).
-- Server locale: python3 -m http.server 5500
+- Dati: js/data/db.js (array in memoria + aggiornamenti ottimistici su Supabase). Schema in supabase/schema.sql: ogni tabella ha user_id default auth.uid(), RLS con 4 policy, FK composte (id, user_id).
+- Fasi e funzioni future (double face, notifiche, allegati, spese, obiettivi): vedi README.
+- Server locale: python3 -m http.server 5500 (avviarlo da Bash: da launch.json macOS nega l'accesso al Desktop). Dopo modifiche a JS/CSS il browser può usare la cache: ricaricare con Cmd+Shift+R.

@@ -1,6 +1,6 @@
 // Pagina di prova del design system (#componenti). Non è nel menu: serve solo in sviluppo.
 
-import { areas, makeItem } from '../data/fake-data.js';
+import { areas } from '../data/db.js';
 import { icon } from '../icons.js';
 import { itemRow, areaAttrs, escapeHtml } from '../ui.js';
 import { todayISO } from '../dates.js';
@@ -11,13 +11,22 @@ export function eyebrow() {
   return 'Design system';
 }
 
+// Elemento di esempio (non salvato), con le aree vere dell'utente
+function sample(areaIndex, fields) {
+  return {
+    id: `demo-${areaIndex}-${fields.title}`, type: 'task', area_id: areas[areaIndex]?.id,
+    start_time: null, duration_min: null, location: null, priority: null, due_date: null, done: false,
+    ...fields,
+  };
+}
+
 export function render(container) {
   const today = todayISO();
   const samples = [
-    makeItem({ title: 'Task normale', area_id: 'vivaio' }),
-    makeItem({ title: 'Task con priorità alta e scadenza', area_id: 'kroma', priority: 'high', due_date: today }),
-    makeItem({ title: 'Task completata', area_id: 'personale', done: true }),
-    makeItem({ type: 'appointment', title: 'Appuntamento con orario e luogo', area_id: 'kroma', start_time: '16:30', duration_min: 45, location: 'Google Meet' }),
+    sample(0, { title: 'Task normale' }),
+    sample(1, { title: 'Task con priorità alta e scadenza', priority: 'high', due_date: today }),
+    sample(2, { title: 'Task completata', done: true }),
+    sample(1, { type: 'appointment', title: 'Appuntamento con orario e luogo', start_time: '16:30', duration_min: 45, location: 'Google Meet' }),
   ];
 
   container.innerHTML = `
@@ -34,7 +43,7 @@ export function render(container) {
       <p style="font-size: var(--fs-lg); font-weight: 600">Titolo elemento 18</p>
       <p>Testo base 16, Plus Jakarta Sans</p>
       <p style="font-size: var(--fs-sm); color: var(--text-3)">Meta 14, colore terziario</p>
-      <p class="num" style="font-size: var(--fs-xl); font-weight: 700">07:00 11:11 15:30 · Manrope tabular</p>
+      <p class="num" style="font-size: var(--fs-xl); font-weight: 700">07:00 11:11 15:30 (Manrope, cifre tabulari)</p>
     </section>
 
     <section class="section">
