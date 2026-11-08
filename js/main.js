@@ -7,6 +7,7 @@ import { initItemEditor } from './item-editor.js';
 import { initGoalEditor } from './goal-editor.js';
 import { initMoneyEditor } from './money-editor.js';
 import { initToast, flushToast } from './ui.js';
+import { initAvatar, clearAvatar, initAvatarPicker } from './avatar.js';
 import { isConfigured } from './supabase.js';
 import { onAuthChange, signIn, signUp, signOut } from './auth.js';
 import { loadAll, ensureDefaults, clearData } from './data/db.js';
@@ -16,7 +17,9 @@ const titleEl = document.getElementById('view-title');
 const eyebrowEl = document.getElementById('view-eyebrow');
 
 function renderView(name, view, { isNavigation }) {
-  titleEl.textContent = view.title;
+  // una vista può avere un titolo grande diverso dal nome nel menu (es. Oggi: "Buongiorno, Jess")
+  titleEl.textContent = view.heading?.() ?? view.title;
+  document.getElementById('topbar-avatar').hidden = name !== 'oggi';
   eyebrowEl.textContent = view.eyebrow?.() ?? '';
   document.title = `${view.title} · Jess`;
 
@@ -188,6 +191,7 @@ if (!isConfigured) {
   initGoalEditor();
   initMoneyEditor();
   initToast();
+  initAvatarPicker();
 
   // Il pannello di dettaglio avvisa quando i dati cambiano: ridisegniamo la vista
   // e rimettiamo il focus sull'elemento appena modificato (se è ancora visibile)
@@ -207,9 +211,11 @@ if (!isConfigured) {
   onAuthChange((session) => {
     if (session) {
       showApp(session.user.id);
+      initAvatar(session.user.id);
     } else {
       currentUserId = null;
       clearData();
+      clearAvatar();
       main.innerHTML = '';
       showLogin();
     }

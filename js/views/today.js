@@ -17,6 +17,14 @@ export function eyebrow() {
   return formatDayLong(todayISO());
 }
 
+// Titolo grande della vista: un saluto che cambia con l'ora
+export function heading() {
+  const hour = Math.floor(nowMinutes() / 60);
+  if (hour >= 5 && hour < 13) return 'Buongiorno, Jess';
+  if (hour >= 13 && hour < 18) return 'Buon pomeriggio, Jess';
+  return 'Buonasera, Jess';
+}
+
 // Contatori dei sotto-elementi, ricalcolati a ogni render (vedi childStats in ui.js)
 let stats = new Map();
 

@@ -41,31 +41,33 @@
   --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
   --dur: 160ms;
 
-  /* ---------- Tema chiaro (predefinito) ---------- */
+  /* ---------- Tema chiaro (predefinito): i colori di Jess ----------
+     beige come base, verde quasi turchese per le azioni, rosso per i dettagli */
   color-scheme: light;
-  --bg: #f6f5f2;          /* sfondo pagina, neutro caldo */
-  --surface: #ffffff;     /* liste, pannelli */
-  --surface-2: #efede8;   /* fascia lavoro, tracce, hover */
-  --border: #e4e1db;
-  --border-strong: #c9c5bd;
-  --text: #1c1b19;
-  --text-2: #57534d;      /* testo secondario */
-  --text-3: #736e67;      /* meta, etichette (contrasto AA su bianco e su --bg) */
-  --accent: #1c1b19;      /* pulsanti primari: inchiostro, non un colore */
+  --bg: #f4eee4;          /* beige: sfondo pagina */
+  --surface: #fffdf9;     /* bianco caldo: liste, pannelli */
+  --surface-2: #ece4d6;   /* beige più scuro: fascia lavoro, tracce, hover */
+  --border: #e2d8c8;
+  --border-strong: #c9bca7;
+  --text: #22201c;
+  --text-2: #5a5247;      /* testo secondario */
+  --text-3: #75695a;      /* meta, etichette (contrasto AA su bianco e su --bg) */
+  --accent: #0b6f67;      /* verde-turchese scuro: pulsanti, testo bianco leggibile (contrasto 6:1) */
   --on-accent: #ffffff;
-  --focus: #1f5fd1;
-  --danger: #b42318;
-  --warning: #b54708;
-  --now: #d92d20;         /* linea dell'ora attuale */
+  --focus: #0b6f67;
+  --danger: #a3221b;      /* errori: più scuro del rosso di Jess, per non confonderli */
+  --warning: #a15c07;
+  --now: #d0443c;         /* rosso di Jess: linea dell'ora attuale */
 
-  /* Colori del marchio nella schermata di accesso (gli stessi delle aree iniziali) */
-  --mark-1: #2f7a4b;
-  --mark-2: #d24f03;
-  --mark-3: #b0356a;
+  /* Colori del marchio (schermata di accesso e icona) */
+  --mark-1: #0f8f84;
+  --mark-2: #d0443c;
+  --mark-3: #8a6a4a;
 
-  /* Grafici dei soldi: entrate e uscite (coppia verificata per daltonismo e contrasto) */
-  --chart-in: #2a78d6;
-  --chart-out: #eb6834;
+  /* Grafici dei soldi: entrate verde-turchese, uscite rosse
+     (coppia verificata con lo script della skill dataviz: daltonismo e contrasto) */
+  --chart-in: #0f8f84;
+  --chart-out: #d0443c;
 
   /* Quanto "schiarire" i colori delle aree (0% in chiaro, vedi tema scuro) */
   --area-lift: 0%;
@@ -77,49 +79,49 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg: #141412;
-    --surface: #1c1b19;
-    --surface-2: #252421;
-    --border: #2f2d2a;
-    --border-strong: #46433e;
-    --text: #eeece8;
-    --text-2: #b8b4ad;
-    --text-3: #9a958d;
-    --accent: #eeece8;
-    --on-accent: #141412;
-    --focus: #7aa7ff;
+    --bg: #1b1814;            /* marrone molto scuro, non nero: resta caldo come il beige */
+    --surface: #221e19;
+    --surface-2: #2c2721;
+    --border: #383128;
+    --border-strong: #4f463b;
+    --text: #f1ebe2;
+    --text-2: #c4b9aa;
+    --text-3: #a2968a;
+    --accent: #2fa89c;
+    --on-accent: #10201e;
+    --focus: #5cc8bc;
     --danger: #ff8a80;
     --warning: #f5a524;
-    --now: #ff6b5e;
+    --now: #e0584f;
     --area-lift: 30%;
     --shadow-float: 0 6px 20px rgb(0 0 0 / 0.5);
     --shadow-subtle: 0 1px 2px rgb(0 0 0 / 0.4);
-    --chart-in: #3987e5;
-    --chart-out: #d95926;
+    --chart-in: #2fa89c;
+    --chart-out: #e0584f;
   }
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #141412;
-  --surface: #1c1b19;
-  --surface-2: #252421;
-  --border: #2f2d2a;
-  --border-strong: #46433e;
-  --text: #eeece8;
-  --text-2: #b8b4ad;
-  --text-3: #9a958d;
-  --accent: #eeece8;
-  --on-accent: #141412;
-  --focus: #7aa7ff;
+  --bg: #1b1814;            /* marrone molto scuro, non nero: resta caldo come il beige */
+  --surface: #221e19;
+  --surface-2: #2c2721;
+  --border: #383128;
+  --border-strong: #4f463b;
+  --text: #f1ebe2;
+  --text-2: #c4b9aa;
+  --text-3: #a2968a;
+  --accent: #2fa89c;
+  --on-accent: #10201e;
+  --focus: #5cc8bc;
   --danger: #ff8a80;
   --warning: #f5a524;
-  --now: #ff6b5e;
+  --now: #e0584f;
   --area-lift: 30%;
   --shadow-float: 0 6px 20px rgb(0 0 0 / 0.5);
   --shadow-subtle: 0 1px 2px rgb(0 0 0 / 0.4);
-  --chart-in: #3987e5;
-  --chart-out: #d95926;
+  --chart-in: #2fa89c;
+  --chart-out: #e0584f;
 }
 
 /* Colore dell'area: ogni elemento con data-area riceve --area (dal JS)

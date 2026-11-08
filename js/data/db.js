@@ -73,9 +73,9 @@ export async function ensureDefaults() {
   if (areas.length > 0) return;
 
   const { error: areasError } = await supabase.from('areas').upsert([
-    // aree generiche, valide per chiunque: si rinominano e si aggiungono dalle Impostazioni
-    { name: 'Lavoro', color: '#2f7a4b', face: 'work', slot: 'work', position: 0 },
-    { name: 'Vita privata', color: '#b0356a', face: 'personal', slot: 'free', position: 1 },
+    // le aree di Jess, con i suoi colori
+    { name: 'Lavoro – Casale Allibrio', color: '#0f8f84', face: 'work', slot: 'work', position: 0 },
+    { name: 'Vita privata', color: '#d0443c', face: 'personal', slot: 'free', position: 1 },
   ], { onConflict: 'user_id,name', ignoreDuplicates: true });
   if (areasError) throw areasError;
 

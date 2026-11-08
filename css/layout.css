@@ -78,11 +78,11 @@
 }
 
 .nav__link[aria-current="page"] {
-  color: var(--text);
+  color: var(--accent);
 }
 
 .nav__link[aria-current="page"] .nav__icon {
-  background: var(--surface-2);
+  background: color-mix(in oklab, var(--accent) 14%, var(--surface));
 }
 
 /* ---------- Desktop ---------- */

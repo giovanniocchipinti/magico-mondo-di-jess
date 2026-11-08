@@ -15,8 +15,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Jess">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="theme-color" content="#f6f5f2" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#141412" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f4eee4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1b1814" media="(prefers-color-scheme: dark)">
 
   <!-- Applica subito il tema salvato, prima che la pagina venga disegnata (evita il "lampo" chiaro) -->
   <script>
@@ -80,7 +80,14 @@
 
     <div class="main-col">
       <header class="topbar">
-        <div>
+        <!-- Foto di Jess (solo nella vista Oggi): toccandola si cambia -->
+        <button class="avatar" id="topbar-avatar" type="button" data-action="change-photo" aria-label="Cambia la tua foto" hidden>
+          <span aria-hidden="true">J</span>
+          <img alt="" hidden>
+        </button>
+        <!-- nascosto solo alla vista: con "hidden" Safari su iPhone a volte non apre la scelta delle foto -->
+        <input class="visually-hidden" id="avatar-input" type="file" accept="image/*" tabindex="-1" aria-hidden="true">
+        <div class="topbar__text">
           <p class="topbar__eyebrow" id="view-eyebrow"></p>
           <h1 class="topbar__title" id="view-title" tabindex="-1"></h1>
         </div>
