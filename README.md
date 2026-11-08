@@ -38,10 +38,18 @@ costruito sulle esigenze di Jessica e pensato per diventare un abbonamento mensi
 5. Obiettivi a passi o a numero, collegati ai suggerimenti dei momenti liberi (fatto)
 6. Soldi: entrate, uscite, pagamenti ricorrenti con scadenza, grafici (fatto)
 7. Calendario: Settimana (drag & drop) e Mese
-8. Sul telefono: PWA installabile su iPhone e pubblicazione online
+8. Sul telefono: PWA installabile su iPhone e pubblicazione online (fatto, manca il DNS su Aruba)
 9. Notifiche: promemoria, scadenze dei pagamenti, riepilogo del mattino
 10. Per tutti: scelta delle proprie aree e dei moduli, nome e marchio
 11. Abbonamento e pagamenti, privacy e termini
+
+## Pubblicazione
+
+- Codice: https://github.com/giovanniocchipinti/magico-mondo-di-jess (pubblico)
+- GitHub Pages dal ramo `main`, cartella principale; dominio nel file `CNAME`
+- Indirizzo: https://agenda.giovanniocchipinti.it (record CNAME su Aruba verso `giovanniocchipinti.github.io`)
+- Pubblicare una modifica: `git push`. Il service worker (`sw.js`) chiede sempre i file nuovi:
+  se cambia il modo in cui salva le copie, aumentare la versione in `CACHE`.
 
 ## Database
 
