@@ -9,10 +9,10 @@ HTML, CSS e JavaScript puri (ES modules), senza framework né build. Dati e logi
 Gli ES modules non funzionano aprendo `index.html` con doppio clic: serve un piccolo server.
 
 ```bash
-python3 -m http.server 5500
+python3 -m http.server 5501
 ```
 
-Poi apri http://localhost:5500.
+Poi apri http://localhost:5501 (la 5500 è spesso occupata da altri progetti).
 
 La pagina `#componenti` mostra il design system (solo per lo sviluppo).
 
@@ -24,20 +24,29 @@ La pagina `#componenti` mostra il design system (solo per lo sviluppo).
 4. In Authentication -> URL Configuration aggiungi l'indirizzo dell'app tra i Redirect URLs.
 5. Crea il tuo account dall'app, poi disattiva le nuove registrazioni.
 
-## Fasi
+## Obiettivo del progetto
+
+"Il magico mondo di Jess": un piccolo gestionale della vita (impegni, obiettivi, soldi),
+costruito sulle esigenze di Jessica e pensato per diventare un abbonamento mensile per chiunque.
+
+## Tappe
 
 1. Setup e design system (fatto)
 2. Database, RLS e login (fatto)
-3. Da pianificare, aggiunta rapida, dettaglio elemento con sotto-elementi e note
-4. Oggi: priorità, frase motivazionale, punto della situazione, buchi liberi con suggerimenti
-5. Settimana con drag & drop e planning settimanale
-6. Mese, Anno, Impostazioni, interruttore Lavoro / Personale
-7. PWA e pubblicazione su GitHub Pages (agenda.giovanniocchipinti.it)
-8. Notifiche e promemoria
-9. Allegati negli elementi
-10. Registro spese con grafici
-11. Obiettivi (anche economici)
-12. Rifinitura: revisione, accessibilità, test, README
+3. Da fare, aggiunta rapida, dettaglio elemento con sotto-elementi e note (fatto)
+4. Oggi: frase del giorno, punto della situazione, priorità, buchi liberi con suggerimenti (fatto)
+5. Obiettivi a passi o a numero, collegati ai suggerimenti dei momenti liberi (fatto)
+6. Soldi: entrate, uscite, pagamenti ricorrenti con scadenza, grafici
+7. Calendario: Settimana (drag & drop) e Mese
+8. Sul telefono: PWA installabile su iPhone e pubblicazione online
+9. Notifiche: promemoria, scadenze dei pagamenti, riepilogo del mattino
+10. Per tutti: scelta delle proprie aree e dei moduli, nome e marchio
+11. Abbonamento e pagamenti, privacy e termini
+
+## Database
+
+- `supabase/schema.sql` descrive il database completo: si usa su un progetto nuovo.
+- `supabase/migrations/` aggiorna un database esistente: si eseguono in ordine, una volta sola.
 
 ## Struttura
 

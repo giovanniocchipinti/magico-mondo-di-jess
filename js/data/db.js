@@ -8,6 +8,7 @@ import { supabase } from '../supabase.js';
 
 export const areas = [];
 export const items = [];
+export const goals = [];
 export const workHours = {}; // { 1: { start: '07:00', end: '15:00' }, ..., 7: null }
 
 // Cambia a ogni logout: serve a riconoscere operazioni partite con la sessione precedente
@@ -27,19 +28,21 @@ function itemFromDb(row) {
 
 // Carica tutto. Per ora gli elementi sono pochi: più avanti caricheremo solo il periodo visibile.
 export async function loadAll() {
-  const [areasRes, itemsRes, hoursRes] = await Promise.all([
+  const [areasRes, itemsRes, hoursRes, goalsRes] = await Promise.all([
     supabase.from('areas').select('*').order('position'),
     supabase.from('items').select('*'),
     supabase.from('work_hours').select('*'),
+    supabase.from('goals').select('*').order('created_at'),
   ]);
 
-  for (const res of [areasRes, itemsRes, hoursRes]) {
+  for (const res of [areasRes, itemsRes, hoursRes, goalsRes]) {
     if (res.error) throw res.error;
   }
 
   // splice svuota e riempie lo STESSO array: chi l'ha importato vede i dati nuovi
   areas.splice(0, areas.length, ...areasRes.data);
   items.splice(0, items.length, ...itemsRes.data.map(itemFromDb));
+  goals.splice(0, goals.length, ...goalsRes.data);
 
   for (let day = 1; day <= 7; day++) workHours[day] = null;
   for (const row of hoursRes.data) {
@@ -56,9 +59,9 @@ export async function ensureDefaults() {
   if (areas.length > 0) return;
 
   const { error: areasError } = await supabase.from('areas').upsert([
-    { name: 'Vivaio', color: '#2f7a4b', face: 'work', slot: 'work', position: 0 },
-    { name: 'Kroma Web Lab', color: '#d24f03', face: 'work', slot: 'free', position: 1 },
-    { name: 'Personale', color: '#b0356a', face: 'personal', slot: 'free', position: 2 },
+    // aree generiche, valide per chiunque: si rinominano e si aggiungono dalle Impostazioni
+    { name: 'Lavoro', color: '#2f7a4b', face: 'work', slot: 'work', position: 0 },
+    { name: 'Vita privata', color: '#b0356a', face: 'personal', slot: 'free', position: 1 },
   ], { onConflict: 'user_id,name', ignoreDuplicates: true });
   if (areasError) throw areasError;
 
@@ -119,10 +122,53 @@ export async function deleteItem(id) {
   if (error) throw error;
 }
 
+// ---------- Obiettivi ----------
+
+export async function createGoal(fields) {
+  const { data, error } = await supabase.from('goals').insert(fields).select().single();
+  if (error) throw error;
+  goals.push(data);
+  return data;
+}
+
+// Come updateItem: subito in memoria, poi sul database, e se rifiuta si torna indietro
+export async function updateGoal(goal, changes) {
+  const previous = {};
+  for (const key of Object.keys(changes)) previous[key] = goal[key];
+  Object.assign(goal, changes);
+
+  const { error } = await supabase.from('goals').update(changes).eq('id', goal.id);
+  if (error) {
+    Object.assign(goal, previous);
+    throw error;
+  }
+}
+
+// I passi NON vengono eliminati: nel database goal_id diventa null ("on delete set null")
+// e qui facciamo lo stesso in memoria, così restano come normali cose da fare
+export async function deleteGoal(goal) {
+  const { error } = await supabase.from('goals').delete().eq('id', goal.id);
+  if (error) throw error;
+  goals.splice(goals.indexOf(goal), 1);
+  for (const item of items) {
+    if (item.goal_id === goal.id) item.goal_id = null;
+  }
+}
+
+// Avanzamento da 0 a 1: passi fatti / passi totali, oppure valore attuale / traguardo
+export function goalProgress(goal) {
+  if (goal.kind === 'number') {
+    return Math.min(1, Math.max(0, Number(goal.current_value) / Number(goal.target_value)));
+  }
+  const steps = items.filter((i) => i.goal_id === goal.id && !i.parent_id);
+  return steps.length ? steps.filter((s) => s.done).length / steps.length : 0;
+}
+
 // Al logout svuotiamo la memoria, così i dati non restano nella pagina
 export function clearData() {
   sessionGeneration += 1;
   areas.length = 0;
   items.length = 0;
+  goals.length = 0;
   for (const key of Object.keys(workHours)) delete workHours[key];
 }

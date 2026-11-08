@@ -4,6 +4,7 @@ import { fillIcons, icon } from './icons.js';
 import { initRouter, refresh } from './router.js';
 import { initQuickAdd } from './quick-add.js';
 import { initItemEditor } from './item-editor.js';
+import { initGoalEditor } from './goal-editor.js';
 import { initToast, flushToast } from './ui.js';
 import { isConfigured } from './supabase.js';
 import { onAuthChange, signIn, signUp, signOut } from './auth.js';
@@ -178,6 +179,7 @@ if (!isConfigured) {
   initLoginForm();
   initQuickAdd();
   initItemEditor();
+  initGoalEditor();
   initToast();
 
   // Il pannello di dettaglio avvisa quando i dati cambiano: ridisegniamo la vista

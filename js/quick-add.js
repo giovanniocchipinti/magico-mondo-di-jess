@@ -1,4 +1,4 @@
-// Aggiunta rapida: scrivi il titolo e l'elemento va in "Da pianificare",
+// Aggiunta rapida: scrivi il titolo e l'elemento va in "Da fare" (senza data),
 // oppure in "Oggi" se sei nella vista Oggi. Viene salvato su Supabase.
 
 import { areas, createItem } from './data/db.js';
@@ -25,7 +25,7 @@ export function initQuickAdd() {
 
     hint.textContent = currentRoute() === 'oggi'
       ? 'Verrà aggiunta a Oggi, senza orario.'
-      : 'Finirà in Da pianificare.';
+      : 'Finirà in Da fare, senza giorno.';
     hint.classList.remove('is-error');
     input.value = '';
     dialog.showModal();

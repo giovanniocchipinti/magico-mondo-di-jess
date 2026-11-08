@@ -1,6 +1,6 @@
 // Pezzi di interfaccia condivisi tra le viste
 
-import { areas, items } from './data/db.js';
+import { areas, items, goals } from './data/db.js';
 import { icon } from './icons.js';
 import { todayISO, addDays, formatDayShort, timeToMin, minToTime } from './dates.js';
 
@@ -65,6 +65,10 @@ export function itemRow(item, { showTime = false, showDate = false, lateDate = f
     meta.push(`<span class="${due.late ? 'is-late' : ''}">${icon('flag')}${due.text}</span>`);
   }
   // Avanzamento dei sotto-elementi, es. "2/5"
+  if (item.goal_id) {
+    const goal = goals.find((g) => g.id === item.goal_id);
+    if (goal) meta.push(`<span class="item__goal">${icon('target')}${escapeHtml(goal.title)}</span>`);
+  }
   const children = stats?.get(item.id);
   if (children) {
     meta.push(`<span>${icon('listTodo')}<span class="num">${children.done}/${children.total}</span><span class="visually-hidden"> sotto-elementi fatti</span></span>`);

@@ -1,7 +1,7 @@
 // Calcoli di pianificazione: buchi liberi in una giornata e cose da suggerire per riempirli.
 // Funzioni "pure" sui dati in memoria: non disegnano niente, così le userà anche la vista Settimana.
 
-import { items, areas, workHours } from './data/db.js';
+import { items, areas, goals, workHours } from './data/db.js';
 import { timeToMin, isoWeekday, addDays } from './dates.js';
 import { priorityRank } from './ui.js';
 
@@ -51,12 +51,20 @@ export function freeGaps(date, from = 0) {
 
 // Task da suggerire per un buco: non fatte, senza orario, di oggi, rimaste indietro o da pianificare,
 // di un'area adatta alla fascia ('work' / 'free'). Prima ciò che scade entro domani,
-// poi per priorità e scadenza.
+// poi i passi degli obiettivi, poi per priorità e scadenza.
 export function suggestionsFor(slot, today, { exclude = new Set(), limit = 2 } = {}) {
-  const slotOf = (item) => areas.find((a) => a.id === item.area_id)?.slot ?? 'any';
+  const slotOf = (item) => {
+    // i passi di un obiettivo "tutta la vita" (senza area) vanno bene in qualsiasi momento
+    const goal = item.goal_id && goals.find((g) => g.id === item.goal_id);
+    if (goal && !goal.area_id) return 'any';
+    return areas.find((a) => a.id === item.area_id)?.slot ?? 'any';
+  };
   const tomorrow = addDays(today, 1);
   // ciò che scade entro domani passa davanti a tutto, anche alla priorità
   const urgent = (item) => (item.due_date && item.due_date <= tomorrow ? 0 : 1);
+  // poi i passi degli obiettivi in corso: i momenti liberi servono a far avanzare gli obiettivi
+  const activeGoals = new Set(goals.filter((g) => !g.achieved_at).map((g) => g.id));
+  const goalStep = (item) => (activeGoals.has(item.goal_id) ? 0 : 1);
 
   return items
     .filter((i) => i.type === 'task' && !i.done && !i.parent_id && !i.start_time && !exclude.has(i.id))
@@ -64,6 +72,7 @@ export function suggestionsFor(slot, today, { exclude = new Set(), limit = 2 } =
     .filter((i) => slotOf(i) === 'any' || slotOf(i) === slot)
     .sort((a, b) =>
       (urgent(a) - urgent(b))
+      || (goalStep(a) - goalStep(b))
       || (priorityRank(a) - priorityRank(b))
       || (a.due_date ?? '9999').localeCompare(b.due_date ?? '9999')
       // a parità, prima ciò che era già previsto per oggi (o prima)

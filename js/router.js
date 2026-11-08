@@ -1,14 +1,15 @@
-// Mini router basato sull'hash dell'URL (#oggi, #settimana, ...).
+// Mini router basato sull'hash dell'URL (#oggi, #calendario, ...).
 // Con l'hash il browser non chiede mai una nuova pagina al server:
 // perfetto per GitHub Pages, che non sa gestire indirizzi come /settimana.
 
 import * as oggi from './views/today.js';
-import * as settimana from './views/week.js';
-import * as mese from './views/month.js';
+import * as calendario from './views/calendar.js';
 import * as inbox from './views/inbox.js';
+import * as obiettivi from './views/goals.js';
+import * as soldi from './views/money.js';
 import * as componenti from './views/components.js';
 
-const routes = { oggi, settimana, mese, inbox, componenti };
+const routes = { oggi, calendario, inbox, obiettivi, soldi, componenti };
 const defaultRoute = 'oggi';
 
 let current = defaultRoute;

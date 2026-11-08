@@ -1,11 +1,11 @@
 // Vista Oggi: frase del giorno, cosa c'è adesso e dopo, il punto della situazione,
 // le priorità, e la giornata divisa in fasce con i buchi liberi e cosa farci
 
-import { items, workHours, updateItem, setDone } from '../data/db.js';
+import { items, goals, workHours, updateItem, setDone, goalProgress } from '../data/db.js';
 import { openEditor } from '../item-editor.js';
 import { icon } from '../icons.js';
 import { itemRow, areaById, areaAttrs, escapeHtml, endTime, restoreFocus, showToast, saveErrorMessage, childStats, priorityRank } from '../ui.js';
-import { todayISO, isoWeekday, formatDayLong, nowMinutes, timeToMin, minToTime, formatIn, formatDuration, addDays, startOfWeek } from '../dates.js';
+import { todayISO, isoWeekday, formatDayLong, nowMinutes, timeToMin, minToTime, formatIn, formatDuration, addDays, startOfWeek, formatTimeLeft } from '../dates.js';
 import { freeGaps, suggestionsFor } from '../planning.js';
 import { quoteOfDay } from '../data/quotes.js';
 
@@ -249,7 +249,27 @@ function situation(topLevel, dayItems, overdue, today) {
            aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}">
         <div class="progress__fill" style="width: ${percent}%"></div>
       </div>
+      ${goalsLine(today)}
     </section>`;
+}
+
+// Gli obiettivi più vicini alla scadenza (al massimo 2), e il "perché" del primo:
+// "dove sei e dove devi arrivare"
+function goalsLine(today) {
+  const active = goals
+    .filter((g) => !g.achieved_at)
+    .sort((a, b) => (a.target_date ?? '9999').localeCompare(b.target_date ?? '9999'))
+    .slice(0, 2);
+  if (!active.length) return '';
+
+  const sentences = active.map((g) => {
+    const percent = Math.round(goalProgress(g) * 100);
+    const left = g.target_date ? `, ${formatTimeLeft(today, g.target_date)}` : '';
+    return `<a class="situation__goal" href="#obiettivi">${escapeHtml(g.title)}</a> è al <strong class="num">${percent}%</strong>${left}.`;
+  });
+  const why = active[0].why ? `<p class="situation__why">${escapeHtml(active[0].why)}</p>` : '';
+
+  return `<p class="situation__text">${icon('target')}${sentences.join(' ')}</p>${why}`;
 }
 
 // ---------- Prima di tutto: al massimo 3 task, le più importanti o urgenti ----------
@@ -358,6 +378,12 @@ function slot({ id, label, iconName, list, gaps, from, to, now, work = false }) 
     </section>`;
 }
 
+// Sotto il titolo di un suggerimento: a quale obiettivo serve
+function goalLabel(item) {
+  const goal = item.goal_id && goals.find((g) => g.id === item.goal_id && !g.achieved_at);
+  return goal ? `<span class="suggestion__goal">${icon('target')}${escapeHtml(goal.title)}</span>` : '';
+}
+
 // Un buco libero con i suggerimenti: "Metti qui" pianifica la task all'inizio del buco
 function gapRow(gap) {
   const length = gap.end - gap.start;
@@ -367,7 +393,7 @@ function gapRow(gap) {
         return `
           <li class="suggestion" data-id="${item.id}" ${areaAttrs(area)}>
             <span class="dot"></span>
-            <button class="suggestion__title" type="button" data-action="open">${escapeHtml(item.title)}</button>
+            <button class="suggestion__title" type="button" data-action="open">${escapeHtml(item.title)}${goalLabel(item)}</button>
             <button class="btn btn--sm" type="button" data-action="place">Metti qui</button>
           </li>`;
       }).join('')}</ul>`

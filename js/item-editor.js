@@ -3,7 +3,7 @@
 // Le modifiche ai campi si salvano solo con "Salva" (chiudere = annullare).
 // I sotto-elementi invece sono righe a sé nel database e si salvano subito.
 
-import { items, areas, updateItem, setDone, createItem, deleteItem, removeLocally, restoreItems, currentGeneration } from './data/db.js';
+import { items, areas, goals, updateItem, setDone, createItem, deleteItem, removeLocally, restoreItems, currentGeneration } from './data/db.js';
 import { icon } from './icons.js';
 import { escapeHtml, areaAttrs, showToast, saveErrorMessage } from './ui.js';
 import { todayISO, addDays, formatDuration } from './dates.js';
@@ -112,7 +112,7 @@ function renderForm() {
         <button class="btn btn--sm" type="button" data-action="date-today">Oggi</button>
         <button class="btn btn--sm" type="button" data-action="date-tomorrow">Domani</button>
       </div>
-      <p class="form-hint">Senza giorno resta in Da pianificare.</p>
+      <p class="form-hint">Senza giorno resta in Da fare.</p>
     </div>
 
     <fieldset class="form-field">
@@ -137,6 +137,8 @@ function renderForm() {
       <label for="ed-location">Luogo</label>
       <input class="field" id="ed-location" name="location" type="text" autocomplete="off" placeholder="Facoltativo" value="${escapeHtml(item.location ?? '')}">
     </div>
+
+    ${goalField(item)}
 
     <fieldset class="form-field">
       <legend>Priorità</legend>
@@ -166,6 +168,20 @@ function renderForm() {
 
   syncSections();
   if (!item.parent_id) renderSubItems();
+}
+
+// "Fa parte di un obiettivo": solo per gli elementi principali e se ci sono obiettivi in corso
+function goalField(item) {
+  const active = goals.filter((g) => !g.achieved_at || g.id === item.goal_id);
+  if (item.parent_id || !active.length) return '';
+  return `
+    <div class="form-field">
+      <label for="ed-goal">Obiettivo</label>
+      <select class="field" id="ed-goal" name="goal_id">
+        <option value="">Nessuno</option>
+        ${active.map((g) => `<option value="${g.id}" ${g.id === item.goal_id ? 'selected' : ''}>${escapeHtml(g.title)}</option>`).join('')}
+      </select>
+    </div>`;
 }
 
 // Per un sotto-elemento: link per tornare al genitore
@@ -250,6 +266,8 @@ function readForm() {
     duration_min: startTime ? Number(data.get('duration_min')) : null,
     location: type === 'appointment' ? data.get('location').trim() || null : null,
     priority: data.get('priority') || null,
+    // se il campo non c'è (sotto-elemento o nessun obiettivo) il collegamento resta com'era
+    goal_id: form.elements.goal_id ? data.get('goal_id') || null : current.goal_id ?? null,
     due_date: data.get('due_date') || null,
     notes: data.get('notes').trim(),
   };

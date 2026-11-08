@@ -62,9 +62,10 @@
     <nav class="nav" aria-label="Viste">
       <div class="nav__brand">Agenda</div>
       <a class="nav__link" href="#oggi" data-route="oggi"><span class="nav__icon" data-icon="sun"></span><span>Oggi</span></a>
-      <a class="nav__link" href="#settimana" data-route="settimana"><span class="nav__icon" data-icon="calendarRange"></span><span>Settimana</span></a>
-      <a class="nav__link" href="#mese" data-route="mese"><span class="nav__icon" data-icon="calendarDays"></span><span>Mese</span></a>
-      <a class="nav__link" href="#inbox" data-route="inbox"><span class="nav__icon" data-icon="inbox"></span><span>Da pianificare</span></a>
+      <a class="nav__link" href="#calendario" data-route="calendario"><span class="nav__icon" data-icon="calendarRange"></span><span>Calendario</span></a>
+      <a class="nav__link" href="#inbox" data-route="inbox"><span class="nav__icon" data-icon="inbox"></span><span>Da fare</span></a>
+      <a class="nav__link" href="#obiettivi" data-route="obiettivi"><span class="nav__icon" data-icon="target"></span><span>Obiettivi</span></a>
+      <a class="nav__link" href="#soldi" data-route="soldi"><span class="nav__icon" data-icon="wallet"></span><span>Soldi</span></a>
     </nav>
 
     <div class="main-col">
@@ -108,6 +109,11 @@
   <!-- Dettaglio di un elemento: il contenuto del form lo costruisce js/item-editor.js -->
   <dialog class="sheet sheet--tall" id="item-editor" aria-labelledby="item-editor-title">
     <form class="sheet__body" id="item-form" novalidate></form>
+  </dialog>
+
+  <!-- Dettaglio di un obiettivo: il form lo costruisce js/goal-editor.js -->
+  <dialog class="sheet sheet--tall" id="goal-editor" aria-labelledby="goal-editor-title">
+    <form class="sheet__body" id="goal-form" novalidate></form>
   </dialog>
 
   <div class="toast" id="toast" role="status" hidden></div>

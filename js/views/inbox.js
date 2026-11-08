@@ -1,4 +1,4 @@
-// Vista Da pianificare: gli elementi senza data, filtrabili per area e priorità.
+// Vista Da fare: gli elementi senza data, filtrabili per area e priorità.
 // Da qui si assegnano a un giorno con "Pianifica".
 
 import { items, areas, setDone } from '../data/db.js';
@@ -6,7 +6,7 @@ import { icon } from '../icons.js';
 import { itemRow, restoreFocus, showToast, areaAttrs, escapeHtml, saveErrorMessage, childStats, priorityRank } from '../ui.js';
 import { openEditor } from '../item-editor.js';
 
-export const title = 'Da pianificare';
+export const title = 'Da fare';
 
 // Filtri attivi: restano finché la pagina è aperta (null = nessun filtro)
 let filterArea = null;
@@ -45,7 +45,7 @@ export function render(container) {
 
   let body;
   if (!all.length) {
-    body = `<div class="placeholder"><p>Niente da pianificare</p><p>Usa il pulsante + per annotare un'idea o una cosa da fare.</p></div>`;
+    body = `<div class="placeholder"><p>Niente da fare senza data</p><p>Usa il pulsante + per annotare un'idea o una cosa da fare.</p></div>`;
   } else if (!list.length) {
     body = `<div class="placeholder"><p>Nessun elemento con questi filtri</p><p>Tocca di nuovo un filtro attivo per toglierlo.</p></div>`;
   } else {

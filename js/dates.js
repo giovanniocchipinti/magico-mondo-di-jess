@@ -16,6 +16,11 @@ export function todayISO() {
   return new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(new Date());
 }
 
+// Giorno (YYYY-MM-DD) a Roma di un istante salvato dal database, es. "2026-11-07T23:30:00Z" -> "2026-11-08"
+export function dateInRome(timestamp) {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(new Date(timestamp));
+}
+
 // Minuti passati dalla mezzanotte, ora di Roma (es. 10:30 -> 630)
 export function nowMinutes() {
   const parts = new Intl.DateTimeFormat('it-IT', {
@@ -94,4 +99,20 @@ export function formatDuration(minutes) {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   return m ? `${h} h ${m}` : `${h} h`;
+}
+
+// Giorni da "from" a "to" (date YYYY-MM-DD): positivo se "to" è dopo
+export function daysBetween(from, to) {
+  return Math.round((toDate(to) - toDate(from)) / 86400000);
+}
+
+// Quanto manca a una scadenza, in parole: "mancano 3 settimane", "scade oggi", "scaduto da 2 giorni"
+export function formatTimeLeft(today, deadline) {
+  const days = daysBetween(today, deadline);
+  if (days < 0) return days === -1 ? 'scaduto ieri' : `scaduto da ${-days} giorni`;
+  if (days === 0) return 'scade oggi';
+  if (days === 1) return 'manca 1 giorno';
+  if (days < 14) return `mancano ${days} giorni`;
+  if (days < 60) return `mancano ${Math.round(days / 7)} settimane`;
+  return `mancano ${Math.round(days / 30)} mesi`;
 }
