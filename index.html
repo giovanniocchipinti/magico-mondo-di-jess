@@ -3,8 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Agenda</title>
-  <meta name="description" content="Agenda personale: Vivaio, Kroma Web Lab, Personale">
+  <title>Il magico mondo di Jess</title>
+  <meta name="description" content="Impegni, obiettivi e soldi in un posto solo.">
+
+  <!-- App installabile (PWA): nome, icone, colori -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <!-- iPhone: aperta dalla schermata Home si apre a schermo intero, senza la barra di Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Jess">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="theme-color" content="#f6f5f2" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#141412" media="(prefers-color-scheme: dark)">
 
@@ -34,8 +44,8 @@
     <div class="login__inner">
       <!-- Marchio: tre binari, uno per area (Vivaio, Kroma, Personale) -->
       <div class="login__mark" aria-hidden="true"><span></span><span></span><span></span></div>
-      <h1 class="login__title">Agenda</h1>
-      <p class="login__lead">Vivaio, Kroma Web Lab e vita personale, giorno per giorno.</p>
+      <h1 class="login__title">Il magico mondo di Jess</h1>
+      <p class="login__lead">Impegni, obiettivi e soldi in un posto solo, giorno per giorno.</p>
 
       <p class="login__notice" id="login-config" hidden>
         Manca il collegamento a Supabase: inserisci URL e chiave del progetto in <code>js/config.js</code>.
@@ -60,7 +70,7 @@
   <div class="app" id="app" hidden>
     <!-- Navigazione: barra in basso su mobile, sidebar su desktop -->
     <nav class="nav" aria-label="Viste">
-      <div class="nav__brand">Agenda</div>
+      <div class="nav__brand">Il magico mondo di Jess</div>
       <a class="nav__link" href="#oggi" data-route="oggi"><span class="nav__icon" data-icon="sun"></span><span>Oggi</span></a>
       <a class="nav__link" href="#calendario" data-route="calendario"><span class="nav__icon" data-icon="calendarRange"></span><span>Calendario</span></a>
       <a class="nav__link" href="#inbox" data-route="inbox"><span class="nav__icon" data-icon="inbox"></span><span>Da fare</span></a>

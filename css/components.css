@@ -705,7 +705,9 @@
 .login__mark span:nth-child(3) { width: 56px; margin-left: 52px; background: color-mix(in oklab, var(--mark-3), white var(--area-lift)); }
 
 .login__title {
-  font-size: 2.5rem;
+  /* il nome è lungo: sul telefono si rimpicciolisce invece di spezzarsi in tre righe */
+  font-size: clamp(2rem, 9vw, 2.5rem);
+  line-height: 1.1;
   letter-spacing: -0.03em;
 }
 

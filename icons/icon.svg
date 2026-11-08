@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Icona di Jess: tre "binari" della giornata (lavoro, vita privata, obiettivi) su fondo caldo.
+       Niente trasparenza e niente angoli arrotondati: l'iPhone li arrotonda da solo. -->
+  <rect width="1024" height="1024" fill="#f6f5f2"/>
+  <g stroke-linecap="round" stroke-width="88">
+    <line x1="292" y1="372" x2="560" y2="372" stroke="#2f7a4b"/>
+    <line x1="388" y1="512" x2="732" y2="512" stroke="#b0356a"/>
+    <line x1="512" y1="652" x2="700" y2="652" stroke="#d24f03"/>
+  </g>
+</svg>

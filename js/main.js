@@ -18,7 +18,7 @@ const eyebrowEl = document.getElementById('view-eyebrow');
 function renderView(name, view, { isNavigation }) {
   titleEl.textContent = view.title;
   eyebrowEl.textContent = view.eyebrow?.() ?? '';
-  document.title = `${view.title} · Agenda`;
+  document.title = `${view.title} · Jess`;
 
   // Ogni vista imposta i suoi gestori con main.onclick = ...: qui li azzeriamo
   // così quelli della vista precedente non restano attivi
@@ -166,6 +166,11 @@ function initLoginForm() {
       submit.disabled = false;
     }
   });
+}
+
+// Service worker: copia dei file sul telefono (vedi sw.js). Funziona solo su https o localhost.
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch((error) => console.warn('Service worker non registrato', error));
 }
 
 fillIcons();
