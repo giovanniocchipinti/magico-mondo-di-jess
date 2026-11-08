@@ -63,6 +63,10 @@
   --mark-2: #d24f03;
   --mark-3: #b0356a;
 
+  /* Grafici dei soldi: entrate e uscite (coppia verificata per daltonismo e contrasto) */
+  --chart-in: #2a78d6;
+  --chart-out: #eb6834;
+
   /* Quanto "schiarire" i colori delle aree (0% in chiaro, vedi tema scuro) */
   --area-lift: 0%;
 }
@@ -90,6 +94,8 @@
     --area-lift: 30%;
     --shadow-float: 0 6px 20px rgb(0 0 0 / 0.5);
     --shadow-subtle: 0 1px 2px rgb(0 0 0 / 0.4);
+    --chart-in: #3987e5;
+    --chart-out: #d95926;
   }
 }
 
@@ -112,6 +118,8 @@
   --area-lift: 30%;
   --shadow-float: 0 6px 20px rgb(0 0 0 / 0.5);
   --shadow-subtle: 0 1px 2px rgb(0 0 0 / 0.4);
+  --chart-in: #3987e5;
+  --chart-out: #d95926;
 }
 
 /* Colore dell'area: ogni elemento con data-area riceve --area (dal JS)

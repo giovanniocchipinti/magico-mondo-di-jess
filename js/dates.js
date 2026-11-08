@@ -116,3 +116,18 @@ export function formatTimeLeft(today, deadline) {
   if (days < 60) return `mancano ${Math.round(days / 7)} settimane`;
   return `mancano ${Math.round(days / 30)} mesi`;
 }
+
+// Stesso giorno del mese, "months" mesi dopo. Se il giorno non esiste (31 a febbraio)
+// si usa l'ultimo del mese: per questo il giorno voluto si passa a parte (day).
+export function addMonths(iso, months, day = Number(iso.slice(8, 10))) {
+  const d = toDate(iso);
+  const target = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + months, 1));
+  const lastDay = new Date(Date.UTC(target.getUTCFullYear(), target.getUTCMonth() + 1, 0)).getUTCDate();
+  target.setUTCDate(Math.min(day, lastDay));
+  return target.toISOString().slice(0, 10);
+}
+
+// "2026-11-15" -> "2026-11"
+export function monthKey(iso) {
+  return iso.slice(0, 7);
+}

@@ -80,13 +80,14 @@ function renderForm() {
         <label class="field-inline">Traguardo
           <input class="field num" name="target_value" type="number" inputmode="decimal" min="0" step="any" value="${goal.target_value ?? ''}" placeholder="2000">
         </label>
-        <label class="field-inline">A che punto sei
+        <label class="field-inline">Punto di partenza
           <input class="field num" name="current_value" type="number" inputmode="decimal" step="any" value="${goal.current_value ?? 0}">
         </label>
         <label class="field-inline">Unità
           <input class="field" name="unit" type="text" maxlength="20" value="${escapeHtml(goal.unit ?? '')}" placeholder="€, libri, kg">
         </label>
       </div>
+      <p class="form-hint" data-section="number-hint">Per gli obiettivi in euro: i movimenti collegati in Soldi si sommano da soli al punto di partenza.</p>
     </fieldset>
 
     ${isNew ? '' : '<section class="subitems" id="goal-steps" aria-labelledby="goal-steps-title"></section>'}
@@ -109,7 +110,9 @@ function renderForm() {
 }
 
 function syncKind() {
-  form.querySelector('[data-section="number"]').hidden = form.elements.kind.value !== 'number';
+  const isNumber = form.elements.kind.value === 'number';
+  form.querySelector('[data-section="number"]').hidden = !isNumber;
+  form.querySelector('[data-section="number-hint"]').hidden = !isNumber;
 }
 
 // I passi sono normali elementi con goal_id: si ridisegna solo questa sezione

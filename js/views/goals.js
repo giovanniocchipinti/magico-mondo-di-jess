@@ -1,6 +1,6 @@
 // Vista Obiettivi: gli obiettivi in corso con il loro avanzamento, e l'archivio di quelli raggiunti
 
-import { goals, goalProgress, items } from '../data/db.js';
+import { goals, goalProgress, goalValue, items } from '../data/db.js';
 import { icon } from '../icons.js';
 import { areaById, areaAttrs, escapeHtml } from '../ui.js';
 import { todayISO, formatDayShort, formatTimeLeft, dateInRome } from '../dates.js';
@@ -20,7 +20,7 @@ const numberFormat = new Intl.NumberFormat('it-IT', { maximumFractionDigits: 2 }
 export function goalAmount(goal) {
   if (goal.kind === 'number') {
     const unit = goal.unit ? ` ${escapeHtml(goal.unit)}` : '';
-    return `${numberFormat.format(goal.current_value)} / ${numberFormat.format(goal.target_value)}${unit}`;
+    return `${numberFormat.format(goalValue(goal))} / ${numberFormat.format(goal.target_value)}${unit}`;
   }
   const steps = items.filter((i) => i.goal_id === goal.id && !i.parent_id);
   const done = steps.filter((s) => s.done).length;

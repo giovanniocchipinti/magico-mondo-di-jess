@@ -31,6 +31,13 @@ export function endTime(item) {
 
 const priorityLabels = { high: 'alta', medium: 'media', low: 'bassa' };
 
+// Importi in euro all'italiana: 1234.5 -> "1.234,50 €"
+// useGrouping 'always': in italiano il separatore delle migliaia di default parte da 10.000
+const moneyFormat = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', useGrouping: 'always' });
+export function formatMoney(amount) {
+  return moneyFormat.format(amount);
+}
+
 // Ordine di importanza per ordinare le liste: alta 0, media 1, bassa 2, nessuna 3
 const priorityOrder = { high: 0, medium: 1, low: 2 };
 export function priorityRank(item) {

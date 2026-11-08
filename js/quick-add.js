@@ -5,6 +5,7 @@ import { areas, createItem } from './data/db.js';
 import { currentRoute, refresh } from './router.js';
 import { areaAttrs, escapeHtml, showToast } from './ui.js';
 import { openEditor } from './item-editor.js';
+import { openTransactionEditor } from './money-editor.js';
 import { todayISO } from './dates.js';
 
 export function initQuickAdd() {
@@ -16,6 +17,9 @@ export function initQuickAdd() {
   const submit = form.querySelector('[type="submit"]');
 
   function open() {
+    // nella pagina Soldi il + registra un movimento, non una cosa da fare
+    if (currentRoute() === 'soldi') return openTransactionEditor(null);
+
     // Le chip delle aree si ricostruiscono a ogni apertura: le aree possono cambiare
     areaGroup.innerHTML = '<legend class="visually-hidden">Area</legend>' + areas.map((area, i) => `
       <label class="chip" ${areaAttrs(area)}>

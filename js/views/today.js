@@ -8,6 +8,8 @@ import { itemRow, areaById, areaAttrs, escapeHtml, endTime, restoreFocus, showTo
 import { todayISO, isoWeekday, formatDayLong, nowMinutes, timeToMin, minToTime, formatIn, formatDuration, addDays, startOfWeek, formatTimeLeft } from '../dates.js';
 import { freeGaps, suggestionsFor } from '../planning.js';
 import { quoteOfDay } from '../data/quotes.js';
+import { dueSoon, dueRow } from './money.js';
+import { payRecurring, openRecurringEditor } from '../money-editor.js';
 
 export const title = 'Oggi';
 
@@ -78,6 +80,7 @@ export function render(container) {
     ${nowCard(timed, allDay, now)}
     ${situation(topLevel, dayItems, overdue, today)}
     ${focusSection(topLevel, today)}
+    ${paymentsSection(today)}
     ${overdue.length ? overdueSection(overdue) : ''}
     ${allDay.length ? allDaySection(allDay) : ''}
     ${daySlots(timed, workHours[isoWeekday(today)], now, today)}
@@ -124,6 +127,11 @@ export function render(container) {
     const button = e.target.closest('[data-action]');
     if (!button || button.tagName !== 'BUTTON') return;
     const row = button.closest('[data-id]');
+
+    // scadenze dei pagamenti (righe di "recurring", non elementi dell'agenda)
+    if (button.dataset.action === 'pay') return payRecurring(row.dataset.id);
+    if (button.dataset.action === 'open-recurring') return openRecurringEditor(row.dataset.id);
+
     const item = items.find((i) => i.id === row.dataset.id);
 
     if (button.dataset.action === 'open') openEditor(item.id);
@@ -270,6 +278,17 @@ function goalsLine(today) {
   const why = active[0].why ? `<p class="situation__why">${escapeHtml(active[0].why)}</p>` : '';
 
   return `<p class="situation__text">${icon('target')}${sentences.join(' ')}</p>${why}`;
+}
+
+// ---------- Pagamenti scaduti o in scadenza nei prossimi 3 giorni ----------
+function paymentsSection(today) {
+  const list = dueSoon(today, 3);
+  if (!list.length) return '';
+  return `
+    <section class="section" aria-labelledby="h-payments">
+      <h2 class="section__head" id="h-payments">${icon('wallet')}Pagamenti da fare <span class="count count--warning num">${list.length}</span></h2>
+      <ul class="group">${list.map((r) => dueRow(r, today)).join('')}</ul>
+    </section>`;
 }
 
 // ---------- Prima di tutto: al massimo 3 task, le più importanti o urgenti ----------

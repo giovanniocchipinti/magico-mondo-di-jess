@@ -1216,3 +1216,287 @@ select.field {
   font-size: var(--fs-sm);
   color: var(--text-2);
 }
+
+/* ---------- Soldi ---------- */
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 calc(var(--s-2) * -1);
+}
+
+.month-nav__label {
+  font-weight: 700;
+}
+
+/* Riepilogo del mese: tre numeri in una sola fascia, non tre card */
+.money-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+
+.money-summary > div {
+  padding: var(--s-3) var(--s-4);
+}
+
+.money-summary > div + div {
+  border-left: 1px solid var(--border);
+}
+
+.money-summary dt {
+  font-size: var(--fs-sm);
+  color: var(--text-3);
+}
+
+.money-summary dd {
+  margin: 2px 0 0;
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+
+.money-summary dd.is-negative {
+  color: var(--danger);
+}
+
+/* l'importo resta su una riga: sul telefono il carattere si riduce invece di andare a capo */
+.money-summary dd {
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .money-summary > div {
+    padding: var(--s-3);
+  }
+
+  .money-summary dd {
+    font-size: var(--fs-sm);
+  }
+}
+
+/* Scadenze */
+.due {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-3) var(--s-2) var(--s-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.due:last-child {
+  border-bottom: 0;
+}
+
+.due__title {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+}
+
+.due__when {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.due__when svg {
+  width: 14px;
+  height: 14px;
+}
+
+.due.is-late .due__when {
+  color: var(--warning);
+  font-weight: 600;
+}
+
+.due__amount {
+  font-weight: 700;
+}
+
+/* Grafico a barre orizzontali (categorie) */
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.bars__row {
+  display: grid;
+  grid-template-columns: minmax(80px, 30%) 1fr auto;
+  align-items: center;
+  gap: var(--s-3);
+  font-size: var(--fs-sm);
+}
+
+.bars__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-2);
+}
+
+.bars__track {
+  height: 10px;
+}
+
+.bars__fill {
+  display: block;
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+  background: var(--chart-out);
+}
+
+.bars__value {
+  font-weight: 600;
+}
+
+/* Grafico a colonne (ultimi 6 mesi) */
+.chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.chart__legend {
+  display: flex;
+  gap: var(--s-4);
+  margin-bottom: var(--s-2);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.chart__legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chart__key {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.chart__key--in,
+.chart__in { background: var(--chart-in); fill: var(--chart-in); }
+.chart__key--out,
+.chart__out { background: var(--chart-out); fill: var(--chart-out); }
+
+.chart__axis {
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+
+.chart__label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  fill: var(--text-3);
+}
+
+/* area invisibile più grande delle barre: il suggerimento compare passando su tutto il mese */
+.chart__hit {
+  fill: transparent;
+}
+
+.chart__month:hover .chart__hit {
+  fill: var(--surface-2);
+}
+
+/* Movimenti */
+.day-head {
+  margin: var(--s-3) 0 var(--s-1);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+.tx {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 0 var(--s-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.tx:last-child {
+  border-bottom: 0;
+}
+
+.tx__dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+}
+
+.tx__dot--in { background: var(--chart-in); }
+.tx__dot--out { background: var(--chart-out); }
+
+.tx__main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  min-height: 52px;
+  padding: var(--s-2) 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+}
+
+.tx__title {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.tx__meta {
+  font-size: var(--fs-sm);
+  color: var(--text-3);
+}
+
+.tx__amount {
+  flex: none;
+  font-weight: 700;
+}
+
+.archive > .btn {
+  margin-top: var(--s-3);
+}
+
+/* Importo nel pannello: grande, è il dato principale */
+.amount-field {
+  position: relative;
+}
+
+.field--amount {
+  min-height: 56px;
+  padding-right: 40px;
+  font-size: var(--fs-xl);
+  font-weight: 700;
+}
+
+.amount-field__unit {
+  position: absolute;
+  top: 50%;
+  right: var(--s-4);
+  transform: translateY(-50%);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  color: var(--text-3);
+}

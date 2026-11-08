@@ -36,7 +36,7 @@ costruito sulle esigenze di Jessica e pensato per diventare un abbonamento mensi
 3. Da fare, aggiunta rapida, dettaglio elemento con sotto-elementi e note (fatto)
 4. Oggi: frase del giorno, punto della situazione, priorità, buchi liberi con suggerimenti (fatto)
 5. Obiettivi a passi o a numero, collegati ai suggerimenti dei momenti liberi (fatto)
-6. Soldi: entrate, uscite, pagamenti ricorrenti con scadenza, grafici
+6. Soldi: entrate, uscite, pagamenti ricorrenti con scadenza, grafici (fatto)
 7. Calendario: Settimana (drag & drop) e Mese
 8. Sul telefono: PWA installabile su iPhone e pubblicazione online
 9. Notifiche: promemoria, scadenze dei pagamenti, riepilogo del mattino

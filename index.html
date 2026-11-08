@@ -86,7 +86,7 @@
   </div>
 
   <!-- Pulsante di aggiunta rapida, sempre visibile -->
-  <button class="fab" id="fab" type="button" aria-label="Aggiungi task" aria-keyshortcuts="N" hidden>
+  <button class="fab" id="fab" type="button" aria-label="Aggiungi" aria-keyshortcuts="N" hidden>
     <span data-icon="plus"></span>
   </button>
 
@@ -114,6 +114,11 @@
   <!-- Dettaglio di un obiettivo: il form lo costruisce js/goal-editor.js -->
   <dialog class="sheet sheet--tall" id="goal-editor" aria-labelledby="goal-editor-title">
     <form class="sheet__body" id="goal-form" novalidate></form>
+  </dialog>
+
+  <!-- Movimento o pagamento ricorrente: il form lo costruisce js/money-editor.js -->
+  <dialog class="sheet sheet--tall" id="money-editor" aria-labelledby="money-editor-title">
+    <form class="sheet__body" id="money-form" novalidate></form>
   </dialog>
 
   <div class="toast" id="toast" role="status" hidden></div>
