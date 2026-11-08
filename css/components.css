@@ -1544,3 +1544,386 @@ select.field {
   outline-offset: 3px;
   border-radius: 50%;
 }
+
+/* ---------- Calendario: più spazio su schermi larghi ---------- */
+@media (min-width: 1024px) {
+  .main-col:has(#main[data-view="calendario"]) {
+    max-width: 1280px;
+  }
+}
+
+/* ---------- Settimana ---------- */
+.week-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  margin: var(--s-3) calc(var(--s-2) * -1) var(--s-2);
+}
+
+.week-toolbar__hint {
+  margin-left: auto;
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+  text-align: right;
+}
+
+.week-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-5);
+}
+
+.week {
+  --hours-w: 44px;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  /* nessun "copia/condividi" o selezione del testo mentre si tiene premuto un impegno */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.week__head,
+.week__allday,
+.week__grid {
+  display: grid;
+  grid-template-columns: var(--hours-w) repeat(var(--days), minmax(0, 1fr));
+}
+
+.week__head {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  border-bottom: 1px solid var(--border);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  background: var(--surface);
+}
+
+.week__day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--s-2) 0;
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+}
+
+.week__day strong {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: var(--fs-md);
+  color: var(--text);
+}
+
+.week__day.is-today strong {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.week__allday {
+  border-bottom: 1px solid var(--border);
+}
+
+.week__label {
+  padding: var(--s-1);
+  font-size: 10px;
+  line-height: 1.2;
+  color: var(--text-3);
+}
+
+.week__allday-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 32px;
+  padding: 3px 2px;
+  border-left: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.allday-chip {
+  overflow: hidden;
+  padding: 2px 6px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: var(--area-soft);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+  box-shadow: inset 3px 0 0 var(--area-c);
+}
+
+.allday-chip.is-done {
+  color: var(--text-3);
+  text-decoration: line-through;
+}
+
+.week__grid {
+  position: relative;
+  height: var(--grid-h);
+}
+
+.week__hours {
+  position: relative;
+}
+
+.week__hours span {
+  position: absolute;
+  right: 6px;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: var(--text-3);
+}
+
+.week__hours span:first-child {
+  transform: none;
+}
+
+/* Colonna di un giorno: righe orarie disegnate con uno sfondo a strisce */
+.week__col {
+  position: relative;
+  border-left: 1px solid var(--border);
+  background-image: linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 100% var(--hour-h);
+  cursor: cell;
+}
+
+.week__col.is-today {
+  background-color: color-mix(in oklab, var(--accent) 4%, var(--surface));
+}
+
+/* Fascia dell'orario di lavoro */
+.week__work {
+  position: absolute;
+  inset-inline: 0;
+  background: color-mix(in oklab, var(--surface-2) 60%, transparent);
+  pointer-events: none;
+}
+
+.week__now {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 2;
+  height: 2px;
+  background: var(--now);
+  pointer-events: none;
+}
+
+.week__now::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--now);
+}
+
+/* Blocco: un impegno nella griglia */
+.block {
+  position: absolute;
+  z-index: 1;
+  padding: 1px 2px;
+  touch-action: manipulation;
+}
+
+.block__open {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 3px 6px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: var(--area-soft);
+  box-shadow: inset 3px 0 0 var(--area-c);
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  cursor: grab;
+}
+
+.block--appt .block__open {
+  background: color-mix(in oklab, var(--area-c) 26%, var(--surface));
+}
+
+.block__time {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.block__title {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  line-height: 1.25;
+  /* nei blocchi stretti si va a capo tra le parole (o con il trattino), non a metà parola */
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.block.is-done .block__title {
+  color: var(--text-3);
+  text-decoration: line-through;
+}
+
+/* Bordo in basso: tirandolo si cambia la durata (area di tocco più grande della linea visibile) */
+.block__resize {
+  position: absolute;
+  inset: auto 2px 0;
+  height: 12px;
+  cursor: ns-resize;
+  touch-action: none;
+}
+
+.block__resize::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  width: 18px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--area-c);
+  opacity: 0;
+  transform: translateX(-50%);
+}
+
+.block:hover .block__resize::after,
+.block.is-dragging .block__resize::after {
+  opacity: 0.7;
+}
+
+.block.is-dragging {
+  z-index: 5;
+}
+
+.block.is-dragging .block__open {
+  box-shadow: inset 3px 0 0 var(--area-c), var(--shadow-float);
+  cursor: grabbing;
+}
+
+/* Lista "Da fare" accanto al calendario */
+.week-inbox {
+  position: sticky;
+  top: var(--s-4);
+  width: 260px;
+  flex: none;
+}
+
+.week-inbox__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  margin-top: var(--s-2);
+}
+
+.inbox-item {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: grab;
+  user-select: none;
+}
+
+/* ---------- Mese ---------- */
+.month {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.month__weekday {
+  padding-bottom: var(--s-1);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-3);
+}
+
+.month__day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-height: 52px;
+  padding: 6px 0;
+  border: 0;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--text);
+}
+
+.month__day:hover {
+  background: var(--surface-2);
+}
+
+.month__num {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.month__day.is-outside {
+  color: var(--text-3);
+  opacity: 0.6;
+}
+
+.month__day.is-today .month__num {
+  color: var(--accent);
+  font-weight: 800;
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+
+.month__day[aria-pressed="true"] .month__num {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.month__dots {
+  display: flex;
+  gap: 3px;
+  min-height: 6px;
+}
+
+.month__dots .dot {
+  width: 6px;
+  height: 6px;
+}
+
+/* giorno con tutto fatto: pallini più tenui */
+.month__day.is-clear .month__dots {
+  opacity: 0.4;
+}
+
+.month__day-title {
+  font-size: var(--fs-md);
+  color: var(--text);
+}
+
+@media (min-width: 768px) {
+  .month__day {
+    min-height: 72px;
+  }
+}

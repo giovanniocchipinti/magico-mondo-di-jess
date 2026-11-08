@@ -20,9 +20,10 @@ export function areaById(id) {
 
 // Attributi da mettere su ogni elemento colorato per area (vedi [data-area] in tokens.css)
 // Il colore viene accettato solo nel formato #rrggbb: così nessun testo strano finisce nell'attributo style
-export function areaAttrs(area) {
+// extraStyle: altre regole CSS da aggiungere allo stesso attributo style (es. la posizione di un blocco)
+export function areaAttrs(area, extraStyle = '') {
   const color = /^#[0-9a-f]{6}$/i.test(area.color) ? area.color : '#8a857d';
-  return `data-area="${escapeHtml(area.id)}" style="--area: ${color}"`;
+  return `data-area="${escapeHtml(area.id)}" style="--area: ${color};${extraStyle}"`;
 }
 
 export function endTime(item) {

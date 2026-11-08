@@ -2,6 +2,7 @@
 
 import * as week from './week.js';
 import * as month from './month.js';
+import { isDragging } from '../week-drag.js';
 
 export const title = 'Calendario';
 
@@ -13,6 +14,8 @@ export function eyebrow() {
 }
 
 export function render(container) {
+  // durante un trascinamento non ridisegniamo: al rilascio la vista si aggiorna comunque
+  if (isDragging()) return;
   container.innerHTML = `
     <div class="segmented" role="group" aria-label="Vista del calendario">
       ${['settimana', 'mese'].map((name) => `

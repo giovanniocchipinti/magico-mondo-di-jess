@@ -1,12 +1,22 @@
 // Aggiunta rapida: scrivi il titolo e l'elemento va in "Da fare" (senza data),
-// oppure in "Oggi" se sei nella vista Oggi. Viene salvato su Supabase.
+// oppure in "Oggi" se sei nella vista Oggi, oppure nel giorno/ora toccato nel Calendario.
+// Viene salvato su Supabase.
 
 import { areas, createItem } from './data/db.js';
 import { currentRoute, refresh } from './router.js';
 import { areaAttrs, escapeHtml, showToast } from './ui.js';
 import { openEditor } from './item-editor.js';
 import { openTransactionEditor } from './money-editor.js';
-import { todayISO } from './dates.js';
+import { todayISO, formatDayLong } from './dates.js';
+
+// Aperta dal Calendario: { date, time } dello spazio toccato. Altrimenti null.
+let prefill = null;
+let openDialog = null;
+
+// Apre l'aggiunta rapida per un giorno (e un'ora, facoltativa): la usa il Calendario
+export function openQuickAdd(where) {
+  openDialog?.(where);
+}
 
 export function initQuickAdd() {
   const dialog = document.getElementById('quick-add');
@@ -16,9 +26,10 @@ export function initQuickAdd() {
   const areaGroup = document.getElementById('quick-add-areas');
   const submit = form.querySelector('[type="submit"]');
 
-  function open() {
+  function open(where = null) {
     // nella pagina Soldi il + registra un movimento, non una cosa da fare
-    if (currentRoute() === 'soldi') return openTransactionEditor(null);
+    if (currentRoute() === 'soldi' && !where) return openTransactionEditor(null);
+    prefill = where;
 
     // Le chip delle aree si ricostruiscono a ogni apertura: le aree possono cambiare
     areaGroup.innerHTML = '<legend class="visually-hidden">Area</legend>' + areas.map((area, i) => `
@@ -27,16 +38,21 @@ export function initQuickAdd() {
         <span class="dot"></span>${escapeHtml(area.name)}
       </label>`).join('');
 
-    hint.textContent = currentRoute() === 'oggi'
-      ? 'Verrà aggiunta a Oggi, senza orario.'
-      : 'Finirà in Da fare, senza giorno.';
+    if (prefill) {
+      hint.textContent = `${formatDayLong(prefill.date)}${prefill.time ? `, alle ${prefill.time} (1 ora)` : ', in giornata'}.`;
+    } else {
+      hint.textContent = currentRoute() === 'oggi'
+        ? 'Verrà aggiunta a Oggi, senza orario.'
+        : 'Finirà in Da fare, senza giorno.';
+    }
     hint.classList.remove('is-error');
     input.value = '';
     dialog.showModal();
     input.focus();
   }
 
-  document.getElementById('fab').addEventListener('click', open);
+  openDialog = open;
+  document.getElementById('fab').addEventListener('click', () => open());
 
   // Scorciatoia da tastiera: "n" apre l'aggiunta rapida (se non stai già scrivendo in un campo)
   document.addEventListener('keydown', (e) => {
@@ -59,7 +75,9 @@ export function initQuickAdd() {
       const item = await createItem({
         title,
         area_id: form.elements.area.value,
-        scheduled_date: currentRoute() === 'oggi' ? todayISO() : null,
+        scheduled_date: prefill?.date ?? (currentRoute() === 'oggi' ? todayISO() : null),
+        start_time: prefill?.time ?? null,
+        duration_min: prefill?.time ? 60 : null,
       });
       dialog.close();
       refresh();
