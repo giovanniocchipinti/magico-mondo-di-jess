@@ -12,6 +12,8 @@ export const goals = [];
 export const categories = [];
 export const recurring = [];
 export const transactions = [];
+// impostazioni personali: valori predefiniti finché non arrivano dal database
+export const settings = { day_end: '22:00', morning_summary: '07:30' };
 export const workHours = {}; // { 1: { start: '07:00', end: '15:00' }, ..., 7: null }
 
 // Cambia a ogni logout: serve a riconoscere operazioni partite con la sessione precedente
@@ -36,7 +38,7 @@ function itemFromDb(row) {
 
 // Carica tutto. Per ora gli elementi sono pochi: più avanti caricheremo solo il periodo visibile.
 export async function loadAll() {
-  const [areasRes, itemsRes, hoursRes, goalsRes, catRes, recRes, txRes] = await Promise.all([
+  const [areasRes, itemsRes, hoursRes, goalsRes, catRes, recRes, txRes, setRes] = await Promise.all([
     supabase.from('areas').select('*').order('position'),
     supabase.from('items').select('*'),
     supabase.from('work_hours').select('*'),
@@ -44,9 +46,10 @@ export async function loadAll() {
     supabase.from('categories').select('*').order('position'),
     supabase.from('recurring').select('*').order('next_due'),
     supabase.from('transactions').select('*').order('date'),
+    supabase.from('settings').select('*').maybeSingle(), // una riga, oppure nessuna (primo accesso)
   ]);
 
-  for (const res of [areasRes, itemsRes, hoursRes, goalsRes, catRes, recRes, txRes]) {
+  for (const res of [areasRes, itemsRes, hoursRes, goalsRes, catRes, recRes, txRes, setRes]) {
     if (res.error) throw res.error;
   }
 
@@ -57,6 +60,10 @@ export async function loadAll() {
   categories.splice(0, categories.length, ...catRes.data);
   recurring.splice(0, recurring.length, ...recRes.data.map(moneyFromDb));
   transactions.splice(0, transactions.length, ...txRes.data.map(moneyFromDb));
+  if (setRes.data) {
+    settings.day_end = hhmm(setRes.data.day_end);
+    settings.morning_summary = hhmm(setRes.data.morning_summary);
+  }
 
   for (let day = 1; day <= 7; day++) workHours[day] = null;
   for (const row of hoursRes.data) {
@@ -256,6 +263,99 @@ export async function deleteRecurring(row) {
   recurring.splice(recurring.indexOf(row), 1);
 }
 
+// ---------- Impostazioni ----------
+
+// Salva le impostazioni (upsert: la riga si crea alla prima modifica)
+export async function updateSettings(changes) {
+  const previous = { ...settings };
+  Object.assign(settings, changes);
+  const { error } = await supabase.from('settings').upsert({ ...settings, updated_at: new Date().toISOString() });
+  if (error) {
+    Object.assign(settings, previous);
+    throw error;
+  }
+}
+
+// Orario di un giorno (1 = lunedì): start/end "HH:MM", oppure null e null = giorno libero
+export async function updateWorkHours(weekday, start, end) {
+  const previous = workHours[weekday];
+  workHours[weekday] = start ? { start, end } : null;
+  const { error } = await supabase.from('work_hours')
+    .upsert({ weekday, start_time: start, end_time: end }, { onConflict: 'user_id,weekday' });
+  if (error) {
+    workHours[weekday] = previous;
+    throw error;
+  }
+}
+
+// ---------- Aree ----------
+
+export async function createArea(fields) {
+  const { data, error } = await supabase.from('areas').insert({ ...fields, position: areas.length }).select().single();
+  if (error) throw error;
+  areas.push(data);
+  return data;
+}
+
+export async function updateArea(area, changes) {
+  const previous = {};
+  for (const key of Object.keys(changes)) previous[key] = area[key];
+  Object.assign(area, changes);
+  const { error } = await supabase.from('areas').update(changes).eq('id', area.id);
+  if (error) {
+    Object.assign(area, previous);
+    throw error;
+  }
+}
+
+// Elimina un'area. Se ha elementi, prima li sposta in moveToId (il database blocca
+// l'eliminazione di un'area con elementi: "on delete restrict").
+// Obiettivi, pagamenti e movimenti restano, senza area ("on delete set null").
+export async function deleteArea(area, moveToId = null) {
+  if (moveToId) {
+    const { error } = await supabase.from('items').update({ area_id: moveToId }).eq('area_id', area.id);
+    if (error) throw error;
+    for (const item of items) if (item.area_id === area.id) item.area_id = moveToId;
+  }
+  const { error } = await supabase.from('areas').delete().eq('id', area.id);
+  if (error) throw error;
+  areas.splice(areas.indexOf(area), 1);
+  for (const list of [goals, recurring, transactions]) {
+    for (const row of list) if (row.area_id === area.id) row.area_id = null;
+  }
+}
+
+// ---------- Categorie dei soldi ----------
+
+export async function createCategory(fields) {
+  const position = categories.filter((c) => c.kind === fields.kind).length;
+  const { data, error } = await supabase.from('categories').insert({ ...fields, position }).select().single();
+  if (error) throw error;
+  categories.push(data);
+  return data;
+}
+
+export async function updateCategory(category, changes) {
+  const previous = {};
+  for (const key of Object.keys(changes)) previous[key] = category[key];
+  Object.assign(category, changes);
+  const { error } = await supabase.from('categories').update(changes).eq('id', category.id);
+  if (error) {
+    Object.assign(category, previous);
+    throw error;
+  }
+}
+
+// I movimenti e i pagamenti con questa categoria restano, senza categoria ("on delete set null")
+export async function deleteCategory(category) {
+  const { error } = await supabase.from('categories').delete().eq('id', category.id);
+  if (error) throw error;
+  categories.splice(categories.indexOf(category), 1);
+  for (const list of [recurring, transactions]) {
+    for (const row of list) if (row.category_id === category.id) row.category_id = null;
+  }
+}
+
 // Al logout svuotiamo la memoria, così i dati non restano nella pagina
 export function clearData() {
   sessionGeneration += 1;
@@ -265,5 +365,6 @@ export function clearData() {
   categories.length = 0;
   recurring.length = 0;
   transactions.length = 0;
+  Object.assign(settings, { day_end: '22:00', morning_summary: '07:30' });
   for (const key of Object.keys(workHours)) delete workHours[key];
 }

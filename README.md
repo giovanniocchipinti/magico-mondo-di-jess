@@ -40,8 +40,8 @@ costruito sulle esigenze di Jessica e pensato per diventare un abbonamento mensi
 7. Calendario: Settimana (drag & drop) e Mese (fatto)
 8. Sul telefono: PWA installabile su iPhone e pubblicazione online (fatto, manca il DNS su Aruba)
 9. Notifiche: promemoria, scadenze dei pagamenti, riepilogo del mattino
-10. Per tutti: scelta delle proprie aree e dei moduli, nome e marchio
-11. Abbonamento e pagamenti, privacy e termini
+10. Versione Jess: colori, saluto, foto privata, aree del Casale (fatto)
+11. Impostazioni: aree, orario di lavoro, giornata, categorie, tema, account (fatto)
 
 ## Pubblicazione
 

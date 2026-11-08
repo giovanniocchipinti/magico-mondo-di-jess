@@ -1,12 +1,11 @@
 // Calcoli di pianificazione: buchi liberi in una giornata e cose da suggerire per riempirli.
 // Funzioni "pure" sui dati in memoria: non disegnano niente, così le userà anche la vista Settimana.
 
-import { items, areas, goals, workHours } from './data/db.js';
+import { items, areas, goals, workHours, settings } from './data/db.js';
 import { timeToMin, isoWeekday, addDays } from './dates.js';
 import { priorityRank } from './ui.js';
 
 export const DAY_START_FREE = 8 * 60;  // nei giorni senza lavoro la giornata parte alle 8:00
-export const DAY_END = 22 * 60;        // i buchi liberi si cercano fino alle 22:00 (diventerà un'impostazione)
 export const MIN_GAP = 30;             // sotto i 30 minuti non è un buco utile
 
 // Buchi liberi di un giorno, a partire da "from" (minuti dalla mezzanotte).
@@ -32,7 +31,8 @@ export function freeGaps(date, from = 0) {
     if (start - cursor >= MIN_GAP) gaps.push({ start: cursor, end: start });
     cursor = Math.max(cursor, end);
   }
-  if (DAY_END - cursor >= MIN_GAP) gaps.push({ start: cursor, end: DAY_END });
+  const dayEnd = timeToMin(settings.day_end); // fino a che ora cercare (Impostazioni)
+  if (dayEnd - cursor >= MIN_GAP) gaps.push({ start: cursor, end: dayEnd });
 
   // Un buco a cavallo della fine del lavoro diventa due: i suggerimenti cambiano tra le due fasce
   const result = [];

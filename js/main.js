@@ -1,15 +1,15 @@
 // Punto di partenza dell'app
 
-import { fillIcons, icon } from './icons.js';
+import { fillIcons } from './icons.js';
 import { initRouter, refresh } from './router.js';
 import { initQuickAdd } from './quick-add.js';
 import { initItemEditor } from './item-editor.js';
 import { initGoalEditor } from './goal-editor.js';
 import { initMoneyEditor } from './money-editor.js';
-import { initToast, flushToast } from './ui.js';
+import { initToast } from './ui.js';
 import { initAvatar, clearAvatar, initAvatarPicker } from './avatar.js';
 import { isConfigured } from './supabase.js';
-import { onAuthChange, signIn, signUp, signOut } from './auth.js';
+import { onAuthChange, signIn, signUp } from './auth.js';
 import { loadAll, ensureDefaults, clearData } from './data/db.js';
 
 const main = document.getElementById('main');
@@ -27,6 +27,7 @@ function renderView(name, view, { isNavigation }) {
   // così quelli della vista precedente non restano attivi
   main.onclick = null;
   main.onchange = null;
+  main.onkeydown = null;
   main.dataset.view = name; // la vista Oggi lo usa per sapere se è ancora quella visibile
   view.render(main);
 
@@ -43,43 +44,6 @@ function renderView(name, view, { isNavigation }) {
   }
 }
 
-// ---------- Tema: automatico -> chiaro -> scuro ----------
-const themes = [
-  { value: null, label: 'automatico', icon: 'monitor' },
-  { value: 'light', label: 'chiaro', icon: 'sun' },
-  { value: 'dark', label: 'scuro', icon: 'moon' },
-];
-
-function initTheme() {
-  const button = document.getElementById('theme-toggle');
-
-  function show() {
-    const saved = document.documentElement.dataset.theme ?? null;
-    const theme = themes.find((t) => t.value === saved) ?? themes[0];
-    button.innerHTML = icon(theme.icon);
-    button.setAttribute('aria-label', `Tema: ${theme.label}. Cambia tema`);
-    button.title = `Tema ${theme.label}`;
-  }
-
-  button.addEventListener('click', () => {
-    const saved = document.documentElement.dataset.theme ?? null;
-    const index = themes.findIndex((t) => t.value === saved);
-    const next = themes[(index + 1) % themes.length];
-
-    if (next.value) document.documentElement.dataset.theme = next.value;
-    else delete document.documentElement.dataset.theme;
-
-    // localStorage può non essere disponibile (es. navigazione privata): lo ignoriamo
-    try {
-      if (next.value) localStorage.setItem('tema', next.value);
-      else localStorage.removeItem('tema');
-    } catch (e) {}
-
-    show();
-  });
-
-  show();
-}
 
 // ---------- Login / app: si mostra una delle due ----------
 const loginEl = document.getElementById('login');
@@ -177,7 +141,6 @@ if ('serviceWorker' in navigator) {
 }
 
 fillIcons();
-initTheme();
 
 if (!isConfigured) {
   // Senza config.js compilato mostriamo solo le istruzioni
@@ -202,11 +165,6 @@ if (!isConfigured) {
     if (id) main.querySelector(`[data-id="${id}"] [data-action="open"]`)?.focus();
   });
 
-  document.getElementById('logout').addEventListener('click', async () => {
-    // Un'eliminazione in attesa di "Annulla" va inviata ora, finché la sessione è valida
-    flushToast();
-    await signOut();
-  });
 
   onAuthChange((session) => {
     if (session) {

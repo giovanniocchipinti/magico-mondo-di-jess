@@ -1927,3 +1927,174 @@ select.field {
     min-height: 72px;
   }
 }
+
+/* ---------- Impostazioni ---------- */
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+
+.settings-item + .settings-item {
+  border-top: 1px solid var(--border);
+}
+
+.settings-item summary {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 52px;
+  padding: 0 var(--s-4);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.settings-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-item summary .dot {
+  width: 12px;
+  height: 12px;
+}
+
+.settings-item__name {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.settings-item__meta {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.settings-item__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--s-2) var(--s-4) var(--s-4);
+}
+
+/* Scelta del colore: cerchi colorati (radio button nascosti) */
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.swatch-option {
+  position: relative;
+  width: var(--tap);
+  height: var(--tap);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.swatch-option::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: var(--sw);
+}
+
+.swatch-option input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.swatch-option:has(input:checked) {
+  box-shadow: inset 0 0 0 2px var(--text);
+}
+
+.swatch-option:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.settings-danger {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--s-2);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--border);
+}
+
+/* Orario di lavoro, un giorno per riga */
+.hours__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  min-height: 56px;
+  padding: var(--s-2) var(--s-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.hours__row:last-child {
+  border-bottom: 0;
+}
+
+.hours__day {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: var(--tap);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hours__day input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+}
+
+.hours__times {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.hours__times .field {
+  width: 112px;
+  min-height: 40px;
+  padding: 0 var(--s-2);
+}
+
+.hours__off {
+  font-size: var(--fs-sm);
+  color: var(--text-3);
+}
+
+/* Campo di testo dentro una riga di elenco (nomi delle categorie) */
+.field--inline {
+  flex: 1;
+  min-height: 40px;
+  border-color: transparent;
+  background: transparent;
+}
+
+.field--inline:hover {
+  border-color: var(--border);
+}
+
+.settings-email {
+  color: var(--text-2);
+}
+
+/* "Prima di eliminare, sposta i N elementi in…": la scelta prende tutta la riga, il pulsante va sotto */
+.settings-danger .field-inline {
+  flex-basis: 100%;
+}

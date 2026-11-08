@@ -8,8 +8,9 @@ import * as inbox from './views/inbox.js';
 import * as obiettivi from './views/goals.js';
 import * as soldi from './views/money.js';
 import * as componenti from './views/components.js';
+import * as impostazioni from './views/settings.js';
 
-const routes = { oggi, calendario, inbox, obiettivi, soldi, componenti };
+const routes = { oggi, calendario, inbox, obiettivi, soldi, impostazioni, componenti };
 const defaultRoute = 'oggi';
 
 let current = defaultRoute;
