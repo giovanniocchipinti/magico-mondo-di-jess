@@ -1524,7 +1524,7 @@ select.field {
   padding: 0;
   border: 2px solid var(--surface);
   border-radius: 50%;
-  /* senza foto: iniziale su verde-turchese chiaro */
+  /* senza foto: icona della fotocamera su verde-turchese chiaro */
   background: color-mix(in oklab, var(--accent) 16%, var(--surface));
   box-shadow: 0 0 0 1px var(--border-strong);
   font-size: var(--fs-xl);
@@ -2097,4 +2097,9 @@ select.field {
 /* "Prima di eliminare, sposta i N elementi in…": la scelta prende tutta la riga, il pulsante va sotto */
 .settings-danger .field-inline {
   flex-basis: 100%;
+}
+
+.avatar__placeholder svg {
+  width: 22px;
+  height: 22px;
 }

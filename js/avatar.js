@@ -11,7 +11,7 @@ let photoUrl = null; // indirizzo temporaneo (firmato) della foto, oppure null
 
 const path = () => `${userId}/avatar.jpg`;
 
-// Disegna la foto o l'iniziale in tutti i punti dove compare (.avatar)
+// Disegna la foto (o lascia l'icona della fotocamera) in tutti i punti dove compare (.avatar)
 function paint() {
   document.querySelectorAll('.avatar').forEach((el) => {
     const img = el.querySelector('img');
@@ -24,7 +24,7 @@ function paint() {
 // valido un'ora, che funziona solo per chi ha fatto il login
 async function loadPhoto() {
   const { data, error } = await supabase.storage.from('avatars').createSignedUrl(path(), 60 * 60);
-  photoUrl = error ? null : data.signedUrl; // errore = nessuna foto caricata: resta l'iniziale
+  photoUrl = error ? null : data.signedUrl; // errore = nessuna foto caricata: resta l'icona
   paint();
 }
 
