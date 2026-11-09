@@ -41,23 +41,28 @@
   --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
   --dur: 160ms;
 
-  /* ---------- Tema chiaro (predefinito): i colori di Jess ----------
-     beige come base, verde quasi turchese per le azioni, rosso per i dettagli */
+  /* ---------- Tema chiaro (predefinito): i colori di Jess, versione "mediterranea" ----------
+     beige luminoso come base, verde-turchese per le azioni, corallo per il + e i dettagli */
   color-scheme: light;
-  --bg: #f4eee4;          /* beige: sfondo pagina */
-  --surface: #fffdf9;     /* bianco caldo: liste, pannelli */
-  --surface-2: #ece4d6;   /* beige più scuro: fascia lavoro, tracce, hover */
-  --border: #e2d8c8;
-  --border-strong: #c9bca7;
-  --text: #22201c;
-  --text-2: #5a5247;      /* testo secondario */
-  --text-3: #75695a;      /* meta, etichette (contrasto AA su bianco e su --bg) */
-  --accent: #0b6f67;      /* verde-turchese scuro: pulsanti, testo bianco leggibile (contrasto 6:1) */
+  --bg: #fbf7f0;          /* beige chiaro: sfondo pagina */
+  --surface: #ffffff;     /* liste, pannelli */
+  --surface-2: #f2ebdf;   /* beige: fascia lavoro, tracce, hover */
+  --border: #ece3d4;
+  --border-strong: #d6c9b5;
+  --text: #1f1d1a;
+  --text-2: #574f45;      /* testo secondario */
+  --text-3: #6f6455;      /* meta, etichette (contrasto AA su bianco e su --bg) */
+  --accent: #0b8278;      /* verde-turchese acceso: pulsanti (testo bianco 4,7:1) */
   --on-accent: #ffffff;
-  --focus: #0b6f67;
-  --danger: #a3221b;      /* errori: più scuro del rosso di Jess, per non confonderli */
+  --accent-2: #e2533f;    /* corallo: pulsante +, dettagli in evidenza (solo forme e icone, non testo) */
+  --on-accent-2: #ffffff;
+  --header-bg: #d7f0eb;   /* fascia verde-acqua della testata */
+  --header-text: #08453f;
+  --header-text-2: #2b6b63;
+  --focus: #0b8278;
+  --danger: #a3221b;      /* errori: più scuro del corallo, per non confonderli */
   --warning: #a15c07;
-  --now: #d0443c;         /* rosso di Jess: linea dell'ora attuale */
+  --now: #e2533f;         /* linea dell'ora attuale */
 
   /* Colori del marchio (schermata di accesso e icona) */
   --mark-1: #0f8f84;
@@ -87,12 +92,17 @@
     --text: #f1ebe2;
     --text-2: #c4b9aa;
     --text-3: #a2968a;
-    --accent: #2fa89c;
-    --on-accent: #10201e;
+    --accent: #34b3a5;
+    --on-accent: #0c2421;
+    --accent-2: #f0705d;
+    --on-accent-2: #2a0d08;
+    --header-bg: #16312d;
+    --header-text: #c7ece5;
+    --header-text-2: #93c9bf;
     --focus: #5cc8bc;
     --danger: #ff8a80;
     --warning: #f5a524;
-    --now: #e0584f;
+    --now: #f0705d;
     --area-lift: 30%;
     --shadow-float: 0 6px 20px rgb(0 0 0 / 0.5);
     --shadow-subtle: 0 1px 2px rgb(0 0 0 / 0.4);
@@ -111,12 +121,17 @@
   --text: #f1ebe2;
   --text-2: #c4b9aa;
   --text-3: #a2968a;
-  --accent: #2fa89c;
-  --on-accent: #10201e;
+  --accent: #34b3a5;
+  --on-accent: #0c2421;
+  --accent-2: #f0705d;
+  --on-accent-2: #2a0d08;
+  --header-bg: #16312d;
+  --header-text: #c7ece5;
+  --header-text-2: #93c9bf;
   --focus: #5cc8bc;
   --danger: #ff8a80;
   --warning: #f5a524;
-  --now: #e0584f;
+  --now: #f0705d;
   --area-lift: 30%;
   --shadow-float: 0 6px 20px rgb(0 0 0 / 0.5);
   --shadow-subtle: 0 1px 2px rgb(0 0 0 / 0.4);

@@ -2176,3 +2176,74 @@ select.field {
 .tour-popover .driver-popover-arrow-side-bottom { border-bottom-color: var(--surface); }
 .tour-popover .driver-popover-arrow-side-left { border-left-color: var(--surface); }
 .tour-popover .driver-popover-arrow-side-right { border-right-color: var(--surface); }
+
+/* ---------- Versione "mediterranea" ----------
+   Testata su una fascia verde-acqua, da bordo a bordo sul telefono */
+.topbar {
+  margin: 0 calc(var(--s-4) * -1) var(--s-5);
+  padding-inline: var(--s-4);
+  padding-bottom: var(--s-4);
+  background: var(--header-bg);
+  color: var(--header-text);
+}
+
+.topbar__title {
+  color: var(--header-text);
+}
+
+.topbar__eyebrow {
+  color: var(--header-text-2);
+}
+
+.topbar .icon-btn {
+  color: var(--header-text-2);
+}
+
+.topbar .icon-btn:hover {
+  background: color-mix(in oklab, var(--header-text) 10%, transparent);
+  color: var(--header-text);
+}
+
+/* la foto sulla fascia: bordo bianco per staccarla */
+.topbar .avatar {
+  border-color: var(--surface);
+  box-shadow: none;
+  background: var(--surface);
+}
+
+/* su schermi larghi la fascia diventa un riquadro arrotondato, non da bordo a bordo */
+@media (min-width: 1024px) {
+  .topbar {
+    margin: var(--s-5) 0 var(--s-6);
+    padding: var(--s-5) var(--s-5) var(--s-4);
+    border-radius: var(--r-lg);
+  }
+}
+
+/* la frase del giorno non sta più attaccata al titolo: la fascia la separa già */
+.quote {
+  margin-top: 0;
+}
+
+/* Pulsante + in corallo */
+.fab {
+  background: var(--accent-2);
+  color: var(--on-accent-2);
+}
+
+/* Barre di avanzamento colorate */
+.progress__fill {
+  background: var(--accent);
+}
+
+/* "Adesso / Dopo": un filo di corallo a sinistra, è la prima cosa da guardare */
+.now-card {
+  box-shadow: inset 4px 0 0 var(--accent-2);
+}
+
+/* sul telefono il saluto sta su una riga: il titolo si adatta un po' alla larghezza */
+@media (max-width: 480px) {
+  .topbar__title {
+    font-size: clamp(1.4rem, 6.8vw, 1.75rem);
+  }
+}
