@@ -11,6 +11,7 @@ import { escapeHtml, areaAttrs, showToast, saveErrorMessage, flushToast } from '
 import { themes, getTheme, setTheme } from '../theme.js';
 import { supabase } from '../supabase.js';
 import { signOut } from '../auth.js';
+import { resetTours } from '../tour.js';
 
 export const title = 'Impostazioni';
 
@@ -180,6 +181,15 @@ function themeSection() {
     </section>`;
 }
 
+function helpSection() {
+  return `
+    <section class="section" aria-labelledby="h-help">
+      <h2 class="section__head" id="h-help">Aiuto</h2>
+      <p class="form-hint">Il tutorial ricomincerà da capo in ogni schermata.</p>
+      <div><button class="btn" type="button" data-action="restart-tour">Rivedi il tutorial</button></div>
+    </section>`;
+}
+
 function accountSection(email) {
   return `
     <section class="section" aria-labelledby="h-account">
@@ -200,6 +210,7 @@ export function render(container) {
     ${daySection()}
     ${categorySection()}
     ${themeSection()}
+    ${helpSection()}
     ${accountSection(null)}
   `;
   // l'email arriva dalla sessione salvata nel browser (nessuna richiesta in rete)
@@ -325,6 +336,15 @@ export function render(container) {
       try {
         await deleteCategory(category);
         refreshView();
+      } catch (error) {
+        showToast(saveErrorMessage(error));
+      }
+    }
+
+    if (action === 'restart-tour') {
+      try {
+        await resetTours();
+        location.hash = 'oggi'; // si riparte dal benvenuto in Oggi
       } catch (error) {
         showToast(saveErrorMessage(error));
       }

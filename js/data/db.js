@@ -13,7 +13,7 @@ export const categories = [];
 export const recurring = [];
 export const transactions = [];
 // impostazioni personali: valori predefiniti finché non arrivano dal database
-export const settings = { day_end: '22:00', morning_summary: '07:30' };
+export const settings = { day_end: '22:00', morning_summary: '07:30', tour_seen: [] };
 export const workHours = {}; // { 1: { start: '07:00', end: '15:00' }, ..., 7: null }
 
 // Cambia a ogni logout: serve a riconoscere operazioni partite con la sessione precedente
@@ -63,6 +63,7 @@ export async function loadAll() {
   if (setRes.data) {
     settings.day_end = hhmm(setRes.data.day_end);
     settings.morning_summary = hhmm(setRes.data.morning_summary);
+    settings.tour_seen = setRes.data.tour_seen ?? [];
   }
 
   for (let day = 1; day <= 7; day++) workHours[day] = null;
@@ -365,6 +366,6 @@ export function clearData() {
   categories.length = 0;
   recurring.length = 0;
   transactions.length = 0;
-  Object.assign(settings, { day_end: '22:00', morning_summary: '07:30' });
+  Object.assign(settings, { day_end: '22:00', morning_summary: '07:30', tour_seen: [] });
   for (const key of Object.keys(workHours)) delete workHours[key];
 }

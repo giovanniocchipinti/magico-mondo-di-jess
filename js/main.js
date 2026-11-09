@@ -8,6 +8,7 @@ import { initGoalEditor } from './goal-editor.js';
 import { initMoneyEditor } from './money-editor.js';
 import { initToast } from './ui.js';
 import { initAvatar, clearAvatar, initAvatarPicker } from './avatar.js';
+import { maybeStartTour, isTourActive } from './tour.js';
 import { isConfigured } from './supabase.js';
 import { onAuthChange, signIn, signUp } from './auth.js';
 import { loadAll, ensureDefaults, clearData } from './data/db.js';
@@ -42,6 +43,9 @@ function renderView(name, view, { isNavigation }) {
     window.scrollTo(0, 0);
     titleEl.focus();
   }
+
+  // La prima volta in questa schermata: il tutorial
+  maybeStartTour(name);
 }
 
 
@@ -160,6 +164,7 @@ if (!isConfigured) {
   // e rimettiamo il focus sull'elemento appena modificato (se è ancora visibile)
   document.addEventListener('agenda:changed', (e) => {
     if (appEl.hidden) return;
+    if (isTourActive()) return; // il tutorial evidenzia elementi della pagina: non ridisegniamo sotto
     refresh();
     const id = e.detail.focusId;
     if (id) main.querySelector(`[data-id="${id}"] [data-action="open"]`)?.focus();
